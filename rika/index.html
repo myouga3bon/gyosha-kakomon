@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="ja">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>理科カコモン類題トレーニング</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Zen+Maru+Gothic:wght@500;700;900&display=swap">
+<style>
+/* Layout: 単元を選ぶ一覧 → 1枚の問題用紙を大きく見せ、解説ボタンで同じ用紙に解説を重ねる */
+:root{
+  --bg:#f3f5f2; --surface:#ffffff; --fg:#1d2420; --muted:#5d6a62; --line:#d5dcd6;
+  --accent:#2f6f4f; --accent-fg:#ffffff; --red:#d32a2f;
+  --bio:#2f7d4f; --geo:#9a6a2c; --chem:#7a4aa8; --phys:#2a62b5;
+  --paper:#ffffff; --exp-bg:#e4f4fb; --exp-fg:#16323d; --pt:#1f5fd1;
+  --display:"Zen Maru Gothic","Hiragino Maru Gothic ProN","BIZ UDPGothic",sans-serif;
+  --body:"BIZ UDPGothic","Hiragino Sans","Yu Gothic",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141a17; --surface:#1d2521; --fg:#e8eee9; --muted:#9fb0a5; --line:#33403a;
+  --accent:#5fb98a; --accent-fg:#0d1a13; --red:#ff6b6b;
+  --exp-bg:#18343f; --exp-fg:#d7eef7; --pt:#8ab4ff;
+  --bio:#6cc792; --geo:#d9a865; --chem:#b994e6; --phys:#7fa9ec; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141a17; --surface:#1d2521; --fg:#e8eee9; --muted:#9fb0a5; --line:#33403a;
+  --accent:#5fb98a; --accent-fg:#0d1a13; --red:#ff6b6b;
+  --exp-bg:#18343f; --exp-fg:#d7eef7; --pt:#8ab4ff;
+  --bio:#6cc792; --geo:#d9a865; --chem:#b994e6; --phys:#7fa9ec; color-scheme:dark}
+html,body{background:var(--bg);color:var(--fg)}
+body{font-family:var(--body);font-size:15px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 40px}
+.wrap{max-width:980px;margin:0 auto;display:flex;flex-direction:column;gap:24px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* ---------- トップ ---------- */
+.hero{display:flex;flex-direction:column;gap:6px}
+.hero .eyebrow{font-size:12px;letter-spacing:.12em;color:var(--muted)}
+.hero h1{font-size:clamp(26px,5vw,38px);font-weight:900;line-height:1.25}
+.hero p{margin:0;color:var(--muted);max-width:60ch}
+.subjects{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:16px}
+.subj{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.subj header{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.subj h2{font-size:22px;color:var(--c)}
+.subj header span{font-size:12px;color:var(--muted)}
+.units{display:grid;grid-template-columns:repeat(auto-fill,minmax(52px,1fr));gap:8px}
+.unit{aspect-ratio:1;border-radius:10px;border:1.5px solid var(--line);background:transparent;color:var(--muted);
+  font-family:var(--display);font-size:20px;font-weight:700;display:grid;place-items:center;position:relative}
+.unit[disabled]{cursor:default;opacity:.55}
+.unit.ready{border-color:var(--c);background:var(--c);color:var(--surface)}
+.unit.ready:hover{filter:brightness(1.08)}
+.legend{font-size:13px;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.legend i{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-2px;margin-right:4px}
+
+/* ---------- 単元ページ ---------- */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:8px;
+  display:flex;flex-wrap:wrap;gap:10px;align-items:center;border-bottom:1px solid var(--line)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.back{border:none;background:none;color:var(--muted);padding:6px 4px;font-size:14px}
+.bar h2{font-size:22px;color:var(--c);flex:1 1 auto}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tab{border:1.5px solid var(--line);background:var(--surface);color:var(--fg);border-radius:999px;padding:6px 14px;font-size:14px}
+.tab[aria-selected="true"]{border-color:var(--c);background:var(--c);color:var(--surface);font-weight:700}
+.kbtn{border:none;border-radius:999px;padding:10px 22px;font-family:var(--display);font-weight:900;font-size:17px;
+  background:var(--red);color:#fff;box-shadow:0 2px 0 rgba(0,0,0,.15)}
+.kbtn.on{background:var(--surface);color:var(--fg);border:2px solid var(--fg)}
+.kbtn[hidden]{display:none!important}
+.mode{font-size:13px;color:var(--muted)}
+.sheet{position:relative;background:var(--paper);border-radius:6px;box-shadow:0 1px 3px rgba(0,0,0,.18);
+  max-width:100%;overflow:hidden}
+.sheet img{display:block;width:100%;height:auto}
+.sheet svg{position:absolute;inset:0;width:100%;height:100%}
+.sheet svg text{font-family:"BIZ UDPGothic",sans-serif;font-weight:700;paint-order:stroke;stroke:#fff;stroke-width:6px;stroke-linejoin:round}
+.kview{display:grid;gap:16px;align-items:start}
+@media (min-width:900px){.kview.k{grid-template-columns:minmax(0,1fr) 320px}}
+.sheet{container-type:inline-size}
+.qb{position:absolute;transform:translateY(-50%);z-index:2;border:2px solid #fff;border-radius:999px;
+  background:#1f5fd1;color:#fff;font-family:var(--body);font-weight:700;font-size:clamp(11px,1.9cqw,16px);
+  padding:.2em .6em;line-height:1.3;box-shadow:0 1px 3px rgba(0,0,0,.3);white-space:nowrap}
+.qb.skip{background:#8a8f8c}
+.qb .hard{font-size:.75em;background:#1e9a4a;border-radius:6px;padding:0 .3em;margin-left:.3em}
+.qb[aria-pressed="true"]{background:#f2b705;color:#1d2420;outline:3px solid #1f5fd1}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:10px}
+@media (min-width:900px){.panel{position:sticky;top:calc(env(safe-area-inset-top,0px) + 72px);max-height:calc(100vh - 100px);overflow:auto}}
+@media (max-width:899px){
+  .panel{position:fixed;left:max(10px,env(safe-area-inset-left,0px));right:max(10px,env(safe-area-inset-right,0px));
+    bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:20;max-height:45vh;overflow:auto;box-shadow:0 6px 24px rgba(0,0,0,.25)}
+  .panel.empty{display:none}
+  .kview.k{padding-bottom:46vh}
+}
+.panel h3{font-size:20px;color:var(--c);display:flex;align-items:center;gap:8px}
+.panel h3 button{margin-left:auto;border:none;background:var(--bg);color:var(--fg);border-radius:999px;width:32px;height:32px;font-size:16px}
+.panel .a{font-weight:700;font-size:19px;margin:0;line-height:1.5}
+.exp b{color:var(--red);font-weight:700}
+.exp i{font-style:normal;font-weight:700;color:var(--pt);display:inline-block;margin-top:4px;border-bottom:2px solid var(--pt)}
+.panel .hint{color:var(--muted);margin:0}
+.panel .skipa{color:var(--red)}
+.ans{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.ans h3{font-size:18px;margin-bottom:8px}
+.ans ol{margin:0;padding:0;list-style:none;display:grid;gap:6px}
+.ans li{display:grid;grid-template-columns:4.2em 1fr;gap:8px;min-width:0}
+.ans li b{color:var(--c);font-variant-numeric:tabular-nums}
+.ans small{color:var(--muted)}
+.ans ol{gap:14px}
+.ans .a{display:flex;flex-direction:column;gap:6px;min-width:0}
+.ans .a>span{font-weight:700}
+.exp{margin:0;font-size:14px;line-height:1.9!important;background:var(--exp-bg);color:var(--exp-fg);border-radius:10px;padding:10px 14px;line-height:1.75}
+.skip span{color:var(--red);font-weight:700}
+.note{font-size:13px;color:var(--muted);margin:0}
+@media (max-width:560px){.bar h2{flex-basis:100%}}
+@media (prefers-reduced-motion:no-preference){.sheet svg{transition:opacity .2s}}
+.switch{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;border:2px solid var(--accent);color:var(--accent);background:var(--surface);border-radius:999px;padding:6px 16px;font-family:var(--display);font-weight:700;text-decoration:none}
+.switch:hover{background:var(--accent);color:var(--accent-fg)}
+.bar .switch{padding:4px 12px;font-size:13px}
+</style>
+
+<div class="wrap" id="app"></div>
+<script src="data.js"></script>
+
+<script>
+/* ===== 単元一覧（PDFの並び順どおり。1単元＝問題2枚＋解答用紙＋解説入り2枚） ===== */
+const SUBJECTS=[
+  {key:'bio', name:'生物', sub:'植物・動物・遺伝など', n:11, color:'--bio'},
+  {key:'geo', name:'地学（天と地）', sub:'天気・天体・大地', n:11, color:'--geo'},
+  {key:'chem',name:'化学', sub:'水溶液・化学変化・イオンなど', n:11, color:'--chem'},
+  {key:'phys',name:'物理', sub:'光・音・ばね・力・エネルギー・運動', n:10, color:'--phys'},
+];
+const CIRC='①②③④⑤⑥⑦⑧⑨⑩⑪';
+
+/* ===== 解説の描き方：元の問題用紙（1236×1749）と同じ座標で打ち込む ===== */
+const R='#d32a2f',B='#1f5fd1',G='#1e9a4a',K='#555';
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+const T=(x,y,s,c,str,anchor='start')=>`<text x="${x}" y="${y}" font-size="${s}" fill="${c}" text-anchor="${anchor}">${esc(str)}</text>`;
+const TL=(x,y,s,c,lines,gap=1.3)=>lines.map((l,i)=>T(x,y+i*s*gap,s,c,l)).join('');
+const O=(cx,cy,rx,ry,c=R)=>`<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry??rx}" fill="none" stroke="${c}" stroke-width="3.5"/>`;
+const L=(x1,y1,x2,y2,c=R,w=3,arrow=false)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}" stroke-linecap="round"${arrow?` marker-end="url(#ah${c.slice(1)})"`:''}/>`;
+const U=(x1,x2,y)=>L(x1,y,x2,y,G,4);
+const BOX=(x,y,w,h,c,fill='rgba(255,255,255,.94)')=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="10" fill="${fill}" stroke="${c}" stroke-width="3"/>`;
+const TAG=(x,y,label,c)=>`<rect x="${x}" y="${y-26}" width="${label.length*24+20}" height="34" rx="17" fill="${c}"/>`+
+  `<text x="${x+10}" y="${y-2}" font-size="24" fill="#fff" style="stroke:none">${esc(label)}</text>`;
+const DEFS=`<defs>${[R,B,G].map(c=>`<marker id="ah${c.slice(1)}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="${c}"/></marker>`).join('')}</defs>`;
+
+/* ===== 試作：生物の① ===== */
+const UNITS={
+ 'bio-1':{
+  pages:[
+   {label:'問題（1枚目）', img:'img/bio1-1.jpg', svg:[
+     // 図1：外側から順に
+     O(400,368,34,24), L(318,432,372,388,R,3,true), TL(268,462,32,R,['外','側'],1.15),
+     O(855,455,50,64), T(855,548,26,R,'おしべ','middle'),
+     O(935,462,30,56), L(965,470,985,470), T(990,482,30,R,'めしべ'),
+     T(690,212,24,B,'ポイント：エンドウのおしべは2種類あるよ！'),
+     L(900,222,866,392,B,2.5,true),
+     TL(1080,530,24,B,['めしべは','1本だけ']),
+     // 図2：双眼実体顕微鏡の使う順
+     T(282,664,28,R,'①右目'), T(412,664,28,R,'④左目'), T(458,716,30,R,'③'), T(462,810,30,R,'②'),
+     // (1)
+     T(918,914,34,R,'キとク'), U(915,1050,926),
+     // (2)
+     O(222,1206,22,22), O(283,1206,26,20), O(519,1206,20,20), O(849,1206,24,20), O(1031,1206,18,20),
+     T(540,1252,24,R,'①右目で ②Q → ③左目で ④P の順にピント合わせ'),
+     // (4)
+     L(433,1538,455,1592), L(316,1572,300,1602),
+     T(452,1630,34,R,'あ：胚珠'), U(450,612,1642),
+     T(232,1650,34,R,'い：e（子房）'), U(230,440,1662),
+   ],
+   // 問題ページにも出す印（範囲外）
+   skip:[
+     L(150,1262,1200,1400,R,5), L(150,1400,1200,1262,R,5),
+     BOX(455,1300,330,62,R,'#fff'), T(620,1343,30,R,'範囲外なので飛ばす！','middle'),
+   ],
+   // 解説ボタン：[番号, x, y, こたえ, 解説, 範囲外?, ムズ?]
+   qs:[
+     ['(1)',8,893,'キ・ク',
+      '図1は、花を<b>外側から順に</b>はがして並べたもの。<br>外側から　がく → 花弁 → <b>おしべ</b> → <b>めしべ</b><br>いちばん内側のケ＝めしべ（1本だけ）<br>そのすぐ外側のキ・ク＝<b>おしべ</b><br>エンドウのおしべは形のちがう2種類がある。<br><i>キもクもおしべ → 2つとも書く！</i>'],
+     ['(2)',8,968,'エ',
+      'Q＝調節ねじ（全体のピントを合わせる）<br>P＝視度調節リング（左右の目の差を直す）<br>① まず<b>右目</b>でのぞき、<b>Q</b>でピントを合わせる<br>② 次に<b>左目</b>でのぞき、<b>P</b>でピントを合わせる<br><i>右目はQ、左目はP</i>',0,1],
+     ['(3)',8,1279,'範囲外なので飛ばす',
+      '合弁花・離弁花は今回のテスト範囲外。<br>この問題は飛ばして(4)へ。',1],
+     ['(4)',8,1426,'あ：胚珠　い：e（子房）',
+      '図3の小さな粒は、子房の中にある<b>胚珠</b>。<br>受粉すると、<br>　<b>胚珠</b> → <b>種子</b>になる<br>　<b>子房</b> → <b>果実</b>になる<br>図4のタンポポでは、下のふくらんだ部分<b>e</b>が子房。<br>胚珠はこの子房の中にある。'],
+   ]},
+   {label:'問題（2枚目）', img:'img/bio1-2.jpg', svg:[
+     O(1000,263,76,28),
+     // 表
+     T(604,484,22,R,'すべて黄色'), L(735,495,758,480,R,2.5,true),
+     O(790,522,32,32), T(828,528,22,R,'多い'),
+     // (5)
+     T(650,612,34,R,'すべて黄色'), U(648,822,624),
+     // (6) 記号
+     O(815,640,15,18), O(381,678,13,14),
+     // かけ合わせ表 Aa×Aa
+     BOX(1092,650,140,345,R),
+     L(1132,662,1132,790,K,2), L(1100,700,1224,700,K,2),
+     T(1150,690,26,K,'A'), T(1194,690,26,K,'a'),
+     T(1106,735,26,K,'A'), T(1140,735,24,R,'AA'), T(1188,735,24,R,'Aa'),
+     T(1106,775,26,K,'a'), T(1140,775,24,R,'Aa'), T(1188,775,24,K,'aa'),
+     `<path d="M1137 710 H1226 V744 H1180 V784 H1137 Z" fill="none" stroke="${B}" stroke-width="3" stroke-linejoin="round"/>`,
+     T(1162,822,24,B,'丸い','middle'),
+     T(1162,875,26,R,'AA：Aa','middle'), T(1162,915,26,R,'＝','middle'), T(1162,958,30,R,'1：2','middle'),
+     L(1092,830,490,826,R,2.5,true), O(255,825,21,21),
+     // ②
+     T(690,978,26,R,'子の代：Aa　しわ：aa'),
+     // かけ合わせ表 Aa×aa
+     L(930,1000,930,1092,K,2), L(902,1036,1024,1036,K,2),
+     T(945,1028,24,K,'A'), T(990,1028,24,K,'a'),
+     T(908,1062,24,K,'a'), T(940,1062,22,R,'Aa'), T(985,1062,22,K,'aa'),
+     T(908,1090,24,K,'a'), T(940,1090,22,R,'Aa'), T(985,1090,22,K,'aa'),
+     T(1035,1058,22,B,'→ 丸：しわ'), T(1060,1086,22,B,'＝1：1'),
+     BOX(150,1586,950,150,R),
+     TAG(166,1626,'こたえ（例）',R),
+     TL(170,1666,24,'#222',['遺伝子の組み合わせが Aa と aa のかけ合わせでは、Aa と aa の組み合わせを','もつものが同じ割合でできるので、丸形としわ形の種子が 1：1 の割合でできる。'],1.35),
+     // (7)
+     L(690,1142,822,1160), T(828,1172,34,R,'外とう膜'), U(826,968,1184),
+     // (8)
+     T(946,1316,28,R,'ウ（体温）'),
+     T(1032,1380,30,R,'イ'), TL(1096,1366,22,R,['陸上に','卵'],1.25),
+     T(842,1480,24,R,'ハト'), T(952,1480,22,R,'トカゲ'), T(1066,1480,22,R,'フナ'),
+     O(734,1513,19,19), O(240,1555,19,19),
+   ],
+   qs:[
+     ['(5)',8,603,'すべて黄色',
+      '子に出るのは、親のどちらか片方の形質だけ。<br>例）丸形×しわ形 → 子はすべて<b>丸形</b><br>子に出る形質は、孫で<b>数が多いほう</b>。<br>子葉の色：黄色 6022 ＞ 緑色 2001<br>→ 子は<b>すべて黄色</b>'],
+     ['(6)①',8,713,'エ',
+      '子はすべて Aa。<br>孫は Aa × Aa の表を書くと<br>　AA：Aa：aa＝1：2：1<br>A を<b>1つでも持てば丸形</b>になる。<br>→ 丸形は AA と Aa だけ<br>→ AA：Aa＝<b>1：2</b><br><i>かけ合わせは表を書いて数える</i>'],
+     ['(6)②',8,861,'遺伝子の組み合わせがAaとaaのかけ合わせでは、Aaとaaの組み合わせをもつものが同じ割合でできるので、丸形としわ形の種子が1：1の割合でできる。',
+      '子の代の種子＝<b>Aa</b>（丸形）<br>しわ形の種子＝<b>aa</b><br>Aa × aa の表を書くと<br>　Aa が2つ、aa が2つ<br>→ 丸形：しわ形＝<b>1：1</b><br><i>説明には「遺伝子の組み合わせ」と「割合」の両方を書く</i>'],
+     ['(7)',8,1075,'外とう膜',
+      'イカ・タコ・貝のなかま＝<b>軟体動物</b><br>内臓をおおっているやわらかい膜＝<b>外とう膜</b><br>軟体動物は背骨も節もなく、外とう膜をもつ。<br><i>軟体動物といえば外とう膜</i>'],
+     ['(8)',8,1221,'お：ウ　か：イ',
+      'Aは最初に1つだけ分かれている。<br>お：体温が<b>変わらない</b>（恒温動物）のはハトだけ<br>　→ お＝<b>ウ</b>、A＝ハト<br>か：<b>陸上に殻のある卵</b>をうむのはトカゲ<br>　（フナは水中に殻のない卵をうむ）<br>　→ か＝<b>イ</b>、B＝トカゲ、C＝フナ'],
+   ]},
+   {label:'解答用紙', img:'img/bio1-ans.jpg', svg:null},
+  ],
+ }
+};
+
+/* ===== data.js（各単元の打ち込みデータ）を読み込んで UNITS に追加 ===== */
+const COL={R,B,G,K};
+function renderItem(it){
+  const [k,...a]=it, c=v=>COL[v]||v;
+  switch(k){
+    case 'h': return `<rect x="${a[0]}" y="${a[1]}" width="${a[2]}" height="${a[3]}" fill="#ffe600" opacity=".45" style="mix-blend-mode:multiply"/>`;
+    case 't': return T(a[0],a[1],a[2],c(a[3]),a[4],a[5]||'start');
+    case 'tl': return TL(a[0],a[1],a[2],c(a[3]),a[4],a[5]||1.3);
+    case 'o': return O(a[0],a[1],a[2],a[3],c(a[4]||'R'));
+    case 'u': return U(a[0],a[1],a[2]);
+    case 'img': return `<rect x="${a[0]}" y="${a[1]}" width="${a[2]}" height="${a[3]}" fill="#fff"/><image href="${a[4]}" x="${a[0]}" y="${a[1]}" width="${a[2]}" height="${a[3]}"/>`;
+    case 'f': return `<ellipse cx="${a[0]}" cy="${a[1]}" rx="${a[2]}" ry="${a[3]}" fill="${R}" opacity=".85"/>`;
+    case 'l': return L(a[0],a[1],a[2],a[3],c(a[4]||'R'),a[5]||3,!!a[6]);
+    case 'x': { const [x1,y1,x2,y2]=a, cx=(x1+x2)/2, cy=(y1+y2)/2;
+      return L(x1,y1,x2,y2,R,5)+L(x1,y2,x2,y1,R,5)+BOX(cx-165,cy-31,330,62,R,'#fff')+T(cx,cy+12,30,R,'範囲外なので飛ばす！','middle'); }
+  }
+  return '';
+}
+const LABELS=['問題（1枚目）','問題（2枚目）'];
+for(const [key,u] of Object.entries(window.UNIT_DATA||{})){
+  const id=key.replace(/^([a-z]+)(\d+)$/,'$1-$2');
+  UNITS[id]={pages:[...u.pages.map((pg,i)=>({label:LABELS[i],img:pg.img,
+      svg:pg.items.map(renderItem), skip:pg.skip.map(renderItem),
+      qs:pg.qs.map(q=>[q[0],8,q[1],q[2],q[3],q[4]==='skip'?1:0,q[4]==='hard'?1:0])})),
+    {label:'解答用紙',img:`img/${key}-ans.jpg`,svg:null}]};
+}
+
+const app=document.getElementById('app');
+let state={page:0,kaisetsu:false};
+
+function renderTop(){
+  app.innerHTML=`
+  <section class="hero">
+    <a class="switch" href="https://myouga3bon.github.io/gyosha-kakomon/shakai/" target="_top">社会へ →</a>
+    <span class="eyebrow">業者テスト 理科 ４系統 ・ 全43単元</span>
+    <h1>理科カコモン<br>類題トレーニング</h1>
+    <p>単元をえらんで問題を解いたら、「解説を見る」ボタンで答えとポイントを確認しよう。</p>
+  </section>
+  <div class="legend"><span><i style="background:var(--bio)"></i>解説あり</span><span><i style="border:1.5px solid var(--line)"></i>準備中</span></div>
+  <div class="subjects">${SUBJECTS.map(s=>`
+    <section class="subj" style="--c:var(${s.color})">
+      <header><h2>${s.name}</h2><span>${s.sub}</span></header>
+      <div class="units">${Array.from({length:s.n},(_,i)=>{
+        const id=`${s.key}-${i+1}`,ok=!!UNITS[id];
+        return `<button class="unit${ok?' ready':''}" ${ok?`data-go="${id}"`:'disabled'} aria-label="${s.name}の${CIRC[i]}${ok?'':'（準備中）'}">${CIRC[i]}</button>`}).join('')}
+      </div>
+    </section>`).join('')}
+  </div>`;
+  app.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{location.hash=b.dataset.go});
+}
+
+function unit(id){
+  const u=UNITS[id],[k,n]=id.split('-'),s=SUBJECTS.find(x=>x.key===k);
+  const p=u.pages[state.page]; const hasK=!!p.svg;
+  if(!hasK) state.kaisetsu=false;
+  app.innerHTML=`
+  <div class="bar" style="--c:var(${s.color})">
+    <button class="back" id="back">← 単元一覧</button><a class="switch" href="https://myouga3bon.github.io/gyosha-kakomon/shakai/" target="_top">社会へ</a>
+    <h2>${s.name}の ${CIRC[n-1]}</h2>
+    <div class="tabs" role="tablist">${u.pages.map((pg,i)=>`<button class="tab" role="tab" aria-selected="${i===state.page}" data-p="${i}">${pg.label}</button>`).join('')}</div>
+    <button class="kbtn${state.kaisetsu?' on':''}" id="kbtn" ${hasK?'':'hidden'}>${state.kaisetsu?'問題にもどる':'解説を見る'}</button>
+  </div>
+  <p class="mode">${hasK?(state.kaisetsu?'解説ページ：青い問題番号ボタンをおすと解説が出るよ（赤＝答え、青＝ポイント、緑＝要チェック）':'問題ページ：答えはノートに書こう'):'解答用紙：印刷して使えます'}</p>
+  <div class="kview${state.kaisetsu?' k':''}" style="--c:var(${s.color})">
+  <div class="sheet">
+    <img src="${p.img}" alt="${s.name}の${CIRC[n-1]} ${p.label}" width="1236" height="1749">
+    ${hasK?`<svg viewBox="0 0 1236 1749" aria-hidden="true">${DEFS}${state.kaisetsu?p.svg.join(''):''}${(p.skip||[]).join('')}</svg>`:''}
+    ${state.kaisetsu?(p.qs||[]).map((q,i)=>`<button class="qb${q[5]?' skip':''}" data-q="${i}" aria-pressed="false" style="left:${q[1]/12.36}%;top:${q[2]/17.49}%">${q[5]?'✕ ':''}${q[0]}${q[6]?'<span class="hard">ムズ</span>':''}</button>`).join(''):''}
+  </div>
+  ${state.kaisetsu?`<aside class="panel empty" id="panel" aria-live="polite"></aside>`:''}
+  </div>`;
+  document.getElementById('back').onclick=()=>{location.hash=''};
+  app.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{state.page=+b.dataset.p;unit(id)});
+  if(state.kaisetsu){
+    const panel=document.getElementById('panel'),btns=[...app.querySelectorAll('.qb')];
+    const show=i=>{
+      btns.forEach((b,j)=>b.setAttribute('aria-pressed',String(j===i)));
+      if(i<0){panel.className='panel empty';panel.innerHTML='<h3>解説</h3><p class="hint">問題番号の青いボタンをおすと、ここに解説が出るよ。</p>';return}
+      const q=p.qs[i];panel.className='panel';
+      panel.innerHTML=`<h3>${q[0]}${q[6]?' <small class="hard" style="font-size:12px;background:#1e9a4a;color:#fff;border-radius:6px;padding:0 6px">ムズ</small>':''}<button id="pclose" aria-label="閉じる">✕</button></h3>`+
+        (q[5]?`<p class="a skipa">✕ ${q[3]}</p>`:`<p class="a">こたえ：${q[3]}</p>`)+`<p class="exp">${q[4]}</p>`;
+      document.getElementById('pclose').onclick=()=>show(-1);
+    };
+    let cur=-1;
+    btns.forEach((b,i)=>b.onclick=()=>{cur=(cur===i)?-1:i;show(cur);
+      // スマホでは解説が下に出るので、問題を画面の上のほうへ動かして隠れないようにする
+      if(cur>=0&&innerWidth<900){const y=b.getBoundingClientRect().top;scrollBy({top:y-innerHeight*0.12,behavior:'smooth'})}});
+    show(-1);
+  }
+  const kb=document.getElementById('kbtn'); if(kb) kb.onclick=()=>{state.kaisetsu=!state.kaisetsu;unit(id)};
+}
+
+function route(){
+  const id=location.hash.slice(1);
+  if(UNITS[id]){ if(route.last!==id){state={page:0,kaisetsu:false}} route.last=id; unit(id); }
+  else { route.last=null; renderTop(); }
+  window.scrollTo(0,0);
+}
+addEventListener('hashchange',route); route();
+</script>

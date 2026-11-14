@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="ja">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>社会カコモン類題トレーニング</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Zen+Maru+Gothic:wght@500;700;900&display=swap">
+<style>
+/* Layout: 単元を選ぶ一覧 → 1枚の問題用紙を大きく見せ、解説ボタンで同じ用紙に解説を重ねる */
+:root{
+  --bg:#f3f5f2; --surface:#ffffff; --fg:#1d2420; --muted:#5d6a62; --line:#d5dcd6;
+  --accent:#2f6f4f; --accent-fg:#ffffff; --red:#d32a2f;
+  --geo:#2f7d4f; --his:#a8552c; --civ:#2a62b5; --kij:#7a4aa8;
+  --paper:#ffffff; --exp-bg:#e4f4fb; --exp-fg:#16323d; --pt:#1f5fd1;
+  --display:"Zen Maru Gothic","Hiragino Maru Gothic ProN","BIZ UDPGothic",sans-serif;
+  --body:"BIZ UDPGothic","Hiragino Sans","Yu Gothic",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141a17; --surface:#1d2521; --fg:#e8eee9; --muted:#9fb0a5; --line:#33403a;
+  --accent:#5fb98a; --accent-fg:#0d1a13; --red:#ff6b6b;
+  --exp-bg:#18343f; --exp-fg:#d7eef7; --pt:#8ab4ff;
+  --geo:#6cc792; --his:#e39a6f; --civ:#7fa9ec; --kij:#b994e6; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141a17; --surface:#1d2521; --fg:#e8eee9; --muted:#9fb0a5; --line:#33403a;
+  --accent:#5fb98a; --accent-fg:#0d1a13; --red:#ff6b6b;
+  --exp-bg:#18343f; --exp-fg:#d7eef7; --pt:#8ab4ff;
+  --geo:#6cc792; --his:#e39a6f; --civ:#7fa9ec; --kij:#b994e6; color-scheme:dark}
+html,body{background:var(--bg);color:var(--fg)}
+body{font-family:var(--body);font-size:15px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 40px}
+.wrap{max-width:980px;margin:0 auto;display:flex;flex-direction:column;gap:24px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* ---------- トップ ---------- */
+.hero{display:flex;flex-direction:column;gap:6px}
+.hero .eyebrow{font-size:12px;letter-spacing:.12em;color:var(--muted)}
+.hero h1{font-size:clamp(26px,5vw,38px);font-weight:900;line-height:1.25}
+.hero p{margin:0;color:var(--muted);max-width:60ch}
+.subjects{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:16px}
+.subj{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.subj header{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.subj h2{font-size:22px;color:var(--c)}
+.subj header span{font-size:12px;color:var(--muted)}
+.units{display:grid;grid-template-columns:repeat(auto-fill,minmax(52px,1fr));gap:8px}
+.unit{aspect-ratio:1;border-radius:10px;border:1.5px solid var(--line);background:transparent;color:var(--muted);
+  font-family:var(--display);font-size:20px;font-weight:700;display:grid;place-items:center;position:relative}
+.unit[disabled]{cursor:default;opacity:.55}
+.unit.ready{border-color:var(--c);background:var(--c);color:var(--surface)}
+.unit.ready:hover{filter:brightness(1.08)}
+.legend{font-size:13px;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.legend i{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-2px;margin-right:4px}
+
+/* ---------- 単元ページ ---------- */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:8px;
+  display:flex;flex-wrap:wrap;gap:10px;align-items:center;border-bottom:1px solid var(--line)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.back{border:none;background:none;color:var(--muted);padding:6px 4px;font-size:14px}
+.bar h2{font-size:22px;color:var(--c);flex:1 1 auto}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tab{border:1.5px solid var(--line);background:var(--surface);color:var(--fg);border-radius:999px;padding:6px 14px;font-size:14px}
+.tab[aria-selected="true"]{border-color:var(--c);background:var(--c);color:var(--surface);font-weight:700}
+.kbtn{border:none;border-radius:999px;padding:10px 22px;font-family:var(--display);font-weight:900;font-size:17px;
+  background:var(--red);color:#fff;box-shadow:0 2px 0 rgba(0,0,0,.15)}
+.kbtn.on{background:var(--surface);color:var(--fg);border:2px solid var(--fg)}
+.kbtn[hidden]{display:none!important}
+.mode{font-size:13px;color:var(--muted)}
+.sheet{position:relative;background:var(--paper);border-radius:6px;box-shadow:0 1px 3px rgba(0,0,0,.18);
+  max-width:100%;overflow:hidden}
+.sheet img{display:block;width:100%;height:auto}
+.sheet svg{position:absolute;inset:0;width:100%;height:100%}
+.sheet svg text{font-family:"BIZ UDPGothic",sans-serif;font-weight:700;paint-order:stroke;stroke:#fff;stroke-width:6px;stroke-linejoin:round}
+.kview{display:grid;gap:16px;align-items:start}
+@media (min-width:900px){.kview.k{grid-template-columns:minmax(0,1fr) 320px}}
+.sheet{container-type:inline-size}
+.qb{position:absolute;transform:translateY(-50%);z-index:2;border:2px solid #fff;border-radius:999px;
+  background:#1f5fd1;color:#fff;font-family:var(--body);font-weight:700;font-size:clamp(11px,1.9cqw,16px);
+  padding:.2em .6em;line-height:1.3;box-shadow:0 1px 3px rgba(0,0,0,.3);white-space:nowrap}
+.qb.skip{background:#8a8f8c}
+.qb .hard{font-size:.75em;background:#1e9a4a;border-radius:6px;padding:0 .3em;margin-left:.3em}
+.qb[aria-pressed="true"]{background:#f2b705;color:#1d2420;outline:3px solid #1f5fd1}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:10px}
+@media (min-width:900px){.panel{position:sticky;top:calc(env(safe-area-inset-top,0px) + 72px);max-height:calc(100vh - 100px);overflow:auto}}
+@media (max-width:899px){
+  .panel{position:fixed;left:max(10px,env(safe-area-inset-left,0px));right:max(10px,env(safe-area-inset-right,0px));
+    bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:20;max-height:45vh;overflow:auto;box-shadow:0 6px 24px rgba(0,0,0,.25)}
+  .panel.empty{display:none}
+  .kview.k{padding-bottom:46vh}
+}
+.panel h3{font-size:20px;color:var(--c);display:flex;align-items:center;gap:8px}
+.panel h3 button{margin-left:auto;border:none;background:var(--bg);color:var(--fg);border-radius:999px;width:32px;height:32px;font-size:16px}
+.panel .a{font-weight:700;font-size:19px;margin:0;line-height:1.5}
+.exp b{color:var(--red);font-weight:700}
+.exp i{font-style:normal;font-weight:700;color:var(--pt);display:inline-block;margin-top:4px;border-bottom:2px solid var(--pt)}
+.panel .hint{color:var(--muted);margin:0}
+.panel .skipa{color:var(--red)}
+.ans{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.ans h3{font-size:18px;margin-bottom:8px}
+.ans ol{margin:0;padding:0;list-style:none;display:grid;gap:6px}
+.ans li{display:grid;grid-template-columns:4.2em 1fr;gap:8px;min-width:0}
+.ans li b{color:var(--c);font-variant-numeric:tabular-nums}
+.ans small{color:var(--muted)}
+.ans ol{gap:14px}
+.ans .a{display:flex;flex-direction:column;gap:6px;min-width:0}
+.ans .a>span{font-weight:700}
+.exp{margin:0;font-size:14px;line-height:1.9!important;background:var(--exp-bg);color:var(--exp-fg);border-radius:10px;padding:10px 14px;line-height:1.75}
+.skip span{color:var(--red);font-weight:700}
+.note{font-size:13px;color:var(--muted);margin:0}
+.cimg{display:block;max-width:100%;margin-top:6px;border:1px solid var(--line);border-radius:6px;background:#fff}
+.sheet.rot img{transform:rotate(90deg)}
+@media (max-width:560px){.bar h2{flex-basis:100%}}
+@media (prefers-reduced-motion:no-preference){.sheet svg{transition:opacity .2s}}
+.switch{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;border:2px solid var(--accent);color:var(--accent);background:var(--surface);border-radius:999px;padding:6px 16px;font-family:var(--display);font-weight:700;text-decoration:none}
+.switch:hover{background:var(--accent);color:var(--accent-fg)}
+.bar .switch{padding:4px 12px;font-size:13px}
+</style>
+
+<div class="wrap" id="app"></div>
+<script src="data.js"></script>
+
+<script>
+/* ===== 単元一覧（PDFの並び順どおり。1単元＝問題2枚＋解答用紙＋解説入り2枚） ===== */
+const SUBJECTS=[
+  {key:'geo', name:'地理', sub:'世界と日本の地理', n:18, color:'--geo'},
+  {key:'his', name:'歴史', sub:'古代から現代まで', n:16, color:'--his'},
+  {key:'civ', name:'公民', sub:'政治・経済・国際', n:16, color:'--civ'},
+  {key:'kij', name:'記述', sub:'資料を読んで書く記述問題', n:10, color:'--kij'},
+];
+const CIRC='①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱';
+
+/* ===== 解説の描き方：元の問題用紙（1240×1754）と同じ座標で打ち込む ===== */
+const R='#d32a2f',B='#1f5fd1',G='#1e9a4a',K='#555';
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+const T=(x,y,s,c,str,anchor='start')=>`<text x="${x}" y="${y}" font-size="${s}" fill="${c}" text-anchor="${anchor}">${esc(str)}</text>`;
+const TL=(x,y,s,c,lines,gap=1.3)=>lines.map((l,i)=>T(x,y+i*s*gap,s,c,l)).join('');
+const O=(cx,cy,rx,ry,c=R)=>`<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry??rx}" fill="none" stroke="${c}" stroke-width="3.5"/>`;
+const L=(x1,y1,x2,y2,c=R,w=3,arrow=false)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}" stroke-linecap="round"${arrow?` marker-end="url(#ah${c.slice(1)})"`:''}/>`;
+const U=(x1,x2,y)=>L(x1,y,x2,y,G,4);
+const BOX=(x,y,w,h,c,fill='rgba(255,255,255,.94)')=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="10" fill="${fill}" stroke="${c}" stroke-width="3"/>`;
+const TAG=(x,y,label,c)=>`<rect x="${x}" y="${y-26}" width="${label.length*24+20}" height="34" rx="17" fill="${c}"/>`+
+  `<text x="${x+10}" y="${y-2}" font-size="24" fill="#fff" style="stroke:none">${esc(label)}</text>`;
+const DEFS=`<defs>${[R,B,G].map(c=>`<marker id="ah${c.slice(1)}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="${c}"/></marker>`).join('')}</defs>`;
+
+const UNITS={};
+
+/* ===== data.js（各単元の打ち込みデータ）を読み込んで UNITS に追加 ===== */
+const COL={R,B,G,K};
+function renderItem(it){
+  const [k,...a]=it, c=v=>COL[v]||v;
+  switch(k){
+    case 'h': return `<rect x="${a[0]}" y="${a[1]}" width="${a[2]}" height="${a[3]}" fill="#ffe600" opacity=".45" style="mix-blend-mode:multiply"/>`;
+    case 't': return T(a[0],a[1],a[2],c(a[3]),a[4],a[5]||'start');
+    case 'tl': return TL(a[0],a[1],a[2],c(a[3]),a[4],a[5]||1.3);
+    case 'o': return O(a[0],a[1],a[2],a[3],c(a[4]||'R'));
+    case 'u': return U(a[0],a[1],a[2]);
+    case 'img': return `<rect x="${a[0]}" y="${a[1]}" width="${a[2]}" height="${a[3]}" fill="#fff"/><image href="${a[4]}" x="${a[0]}" y="${a[1]}" width="${a[2]}" height="${a[3]}"/>`;
+    case 'bx': return BOX(a[0],a[1],a[2],a[3],c(a[4]||'R'));
+    case 'f': return `<ellipse cx="${a[0]}" cy="${a[1]}" rx="${a[2]}" ry="${a[3]}" fill="${R}" opacity=".85"/>`;
+    case 'l': return L(a[0],a[1],a[2],a[3],c(a[4]||'R'),a[5]||3,!!a[6]);
+    case 'x': { const [x1,y1,x2,y2]=a, cx=(x1+x2)/2, cy=(y1+y2)/2;
+      return L(x1,y1,x2,y2,R,5)+L(x1,y2,x2,y1,R,5)+BOX(cx-165,cy-31,330,62,R,'#fff')+T(cx,cy+12,30,R,'範囲外なので飛ばす！','middle'); }
+  }
+  return '';
+}
+const NUM='１２３４５';
+for(const [key,u] of Object.entries(window.UNIT_DATA||{})){
+  const id=key.replace(/^([a-z]+)(\d+)$/,'$1-$2'),one=u.pages.length===1;
+  UNITS[id]={pages:[...u.pages.map((pg,i)=>({label:one?'問題':`問題${NUM[i]}`,img:pg.img,
+      svg:pg.items.map(renderItem), skip:[],
+      qs:pg.qs.map(q=>[q[0],8,q[1],q[2],q[3],q[4]==='skip'?1:0,q[4]==='hard'?1:0])})),
+    ...Array.from({length:u.sheets||0},(_,i)=>({label:'解答用紙（記入用）',img:`img/${key}-sheet${i+1}.jpg`,svg:null})),
+    {label:'正答',img:`img/${key}-ans.jpg`,svg:null,rot:u.rot}]};
+}
+
+const app=document.getElementById('app');
+let state={page:0,kaisetsu:false};
+
+function renderTop(){
+  app.innerHTML=`
+  <section class="hero">
+    <a class="switch" href="https://myouga3bon.github.io/gyosha-kakomon/rika/" target="_top">理科へ →</a>
+    <span class="eyebrow">業者テスト 社会 ４系統 ・ 全60単元</span>
+    <h1>社会カコモン<br>類題トレーニング</h1>
+    <p>単元をえらんで問題を解いたら、「解説を見る」ボタンで答えとポイントを確認しよう。</p>
+  </section>
+  <div class="legend"><span><i style="background:var(--geo)"></i>解説あり</span><span><i style="border:1.5px solid var(--line)"></i>準備中</span></div>
+  <div class="subjects">${SUBJECTS.map(s=>`
+    <section class="subj" style="--c:var(${s.color})">
+      <header><h2>${s.name}</h2><span>${s.sub}</span></header>
+      <div class="units">${Array.from({length:s.n},(_,i)=>{
+        const id=`${s.key}-${i+1}`,ok=!!UNITS[id];
+        return `<button class="unit${ok?' ready':''}" ${ok?`data-go="${id}"`:'disabled'} aria-label="${s.name}の${CIRC[i]}${ok?'':'（準備中）'}">${CIRC[i]}</button>`}).join('')}
+      </div>
+    </section>`).join('')}
+  </div>`;
+  app.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{location.hash=b.dataset.go});
+}
+
+function unit(id){
+  const u=UNITS[id],[k,n]=id.split('-'),s=SUBJECTS.find(x=>x.key===k);
+  const p=u.pages[state.page]; const hasK=!!p.svg;
+  if(!hasK) state.kaisetsu=false;
+  app.innerHTML=`
+  <div class="bar" style="--c:var(${s.color})">
+    <button class="back" id="back">← 単元一覧</button><a class="switch" href="https://myouga3bon.github.io/gyosha-kakomon/rika/" target="_top">理科へ</a>
+    <h2>${s.name}の ${CIRC[n-1]}</h2>
+    <div class="tabs" role="tablist">${u.pages.map((pg,i)=>`<button class="tab" role="tab" aria-selected="${i===state.page}" data-p="${i}">${pg.label}</button>`).join('')}</div>
+    <button class="kbtn${state.kaisetsu?' on':''}" id="kbtn" ${hasK?'':'hidden'}>${state.kaisetsu?'問題にもどる':'解説を見る'}</button>
+  </div>
+  <p class="mode">${hasK?(state.kaisetsu?'解説ページ：青い問題番号ボタンをおすと解説が出るよ（赤＝答え、青＝ポイント、緑＝要チェック）':'問題ページ：答えはノートに書こう'):(p.label==='正答'?'正答：赤わくの中がこの単元の答えだよ':'解答用紙：印刷して使えます')}</p>
+  <div class="kview${state.kaisetsu?' k':''}" style="--c:var(${s.color})">
+  <div class="sheet">
+    <img src="${p.img}" alt="${s.name}の${CIRC[n-1]} ${p.label}" width="1240" height="1754">
+    ${hasK?`<svg viewBox="0 0 1240 1754" aria-hidden="true">${DEFS}${state.kaisetsu?p.svg.join(''):''}${(p.skip||[]).join('')}</svg>`:''}
+    ${state.kaisetsu?(p.qs||[]).map((q,i)=>`<button class="qb${q[5]?' skip':''}" data-q="${i}" aria-pressed="false" style="left:${q[1]/12.40}%;top:${q[2]/17.54}%">${q[5]?'✕ ':''}${q[0]}${q[6]?'<span class="hard">ムズ</span>':''}</button>`).join(''):''}
+  </div>
+  ${state.kaisetsu?`<aside class="panel empty" id="panel" aria-live="polite"></aside>`:''}
+  </div>`;
+  document.getElementById('back').onclick=()=>{location.hash=''};
+  app.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{state.page=+b.dataset.p;unit(id)});
+  if(state.kaisetsu){
+    const panel=document.getElementById('panel'),btns=[...app.querySelectorAll('.qb')];
+    const show=i=>{
+      btns.forEach((b,j)=>b.setAttribute('aria-pressed',String(j===i)));
+      if(i<0){panel.className='panel empty';panel.innerHTML='<h3>解説</h3><p class="hint">問題番号の青いボタンをおすと、ここに解説が出るよ。</p>';return}
+      const q=p.qs[i];panel.className='panel';
+      panel.innerHTML=`<h3>${q[0]}${q[6]?' <small class="hard" style="font-size:12px;background:#1e9a4a;color:#fff;border-radius:6px;padding:0 6px">ムズ</small>':''}<button id="pclose" aria-label="閉じる">✕</button></h3>`+
+        (q[5]?`<p class="a skipa">✕ ${q[3]}</p>`:`<p class="a">こたえ：${q[3]}</p>`)+`<p class="exp">${q[4]}</p>`;
+      document.getElementById('pclose').onclick=()=>show(-1);
+    };
+    let cur=-1;
+    btns.forEach((b,i)=>b.onclick=()=>{cur=(cur===i)?-1:i;show(cur);
+      // スマホでは解説が下に出るので、問題を画面の上のほうへ動かして隠れないようにする
+      if(cur>=0&&innerWidth<900){const y=b.getBoundingClientRect().top;scrollBy({top:y-innerHeight*0.12,behavior:'smooth'})}});
+    show(-1);
+  }
+  const kb=document.getElementById('kbtn'); if(kb) kb.onclick=()=>{state.kaisetsu=!state.kaisetsu;unit(id)};
+}
+
+function route(){
+  const id=location.hash.slice(1);
+  if(UNITS[id]){ if(route.last!==id){state={page:0,kaisetsu:false}} route.last=id; unit(id); }
+  else { route.last=null; renderTop(); }
+  window.scrollTo(0,0);
+}
+addEventListener('hashchange',route); route();
+</script>
