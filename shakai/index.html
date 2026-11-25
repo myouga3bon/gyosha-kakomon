@@ -132,7 +132,7 @@ body{font-family:var(--body)}
 .subj h2{color:var(--fg);display:flex;align-items:center;gap:8px}
 .subj h2::before{content:"";width:18px;height:26px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:var(--c);border:2px solid var(--brown);transform:rotate(-20deg)}
 .subj header span{color:var(--muted)}
-.units{grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:6px}
+.units{grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:6px}
 .unit{aspect-ratio:auto;display:flex;align-items:center;gap:5px;text-align:left;padding:5px 7px;min-height:40px;border-radius:12px;border:2px solid var(--brown);background:var(--surface);color:var(--fg);font-size:17px;line-height:1.15}
 .unit.ready{border-color:var(--brown);background:var(--c);color:var(--fg)}
 .unit.ready:hover{filter:brightness(1.03);transform:translateY(-1px)}
@@ -171,7 +171,7 @@ const SUBJECTS=[
   {key:'civ', name:'公民', sub:'政治・経済・国際', n:16, color:'--civ'},
   {key:'kij', name:'記述', sub:'資料を読んで書く記述問題', n:10, color:'--kij'},
 ];
-const UNIT_LABELS={"geo-1": "東南アジア・資源", "geo-2": "世界の農業・中国四国", "geo-3": "ヨーロッパ・関東", "geo-4": "資源・農林水産業", "geo-5": "中国四国・アフリカ", "geo-6": "オセアニア・近畿", "geo-7": "近畿", "geo-8": "東北", "geo-9": "北海道・中部", "geo-10": "近畿・日本の領域", "geo-11": "関東・東北", "geo-12": "工業・オセアニア", "geo-13": "東南アジア・北海道", "geo-14": "関東・ヨーロッパ", "geo-15": "九州・北アメリカ", "geo-16": "関東・ヨーロッパ", "geo-17": "日本の地域・ヨーロッパ", "geo-18": "近畿・世界", "his-1": "古代〜近世", "his-2": "奈良〜江戸", "his-3": "古代〜室町", "his-4": "奈良〜江戸", "his-5": "奈良・平安", "his-6": "古代〜鎌倉", "his-7": "農業・産業の歴史", "his-8": "平安〜室町", "his-9": "弥生〜室町", "his-10": "飛鳥〜鎌倉", "his-11": "古代〜室町", "his-12": "奈良・平安", "his-13": "古代〜戦国", "his-14": "奈良〜江戸", "his-15": "奈良〜室町", "his-16": "平安〜室町", "civ-1": "人権・地方自治・国会", "civ-2": "現代社会", "civ-3": "人権・国会・裁判", "civ-4": "憲法・経済", "civ-5": "三権・経済", "civ-6": "選挙・内閣・財政", "civ-7": "裁判・企業・消費者", "civ-8": "地方自治・社会保障", "civ-9": "人権・三権・財政", "civ-10": "現代社会・憲法", "civ-11": "財政・選挙・国際", "civ-12": "企業・労働・金融", "civ-13": "経済・財政・消費者", "civ-14": "三権・経済", "civ-15": "現代社会・共生", "civ-16": "憲法・経済", "kij-1": "エネルギー", "kij-2": "環境", "kij-3": "防災", "kij-4": "裁判員", "kij-5": "市場価格", "kij-6": "社会保障", "kij-7": "人口・社会保障", "kij-8": "国際社会", "kij-9": "国際社会・農業", "kij-10": "国際問題"};
+const UNIT_LABELS={"geo-1": "アジア・工業/正距方位図法", "geo-2": "世界の農業/中国・四国", "geo-3": "ヨーロッパ/関東", "geo-4": "世界の資源/日本の農業", "geo-5": "中国・四国/時差・世界の気候", "geo-6": "オセアニア・時差/近畿", "geo-7": "近畿/世界地図・中国", "geo-8": "東北/時差・世界", "geo-9": "北海道・中部/ヨーロッパ・漁業", "geo-10": "近畿/領域・南アメリカ", "geo-11": "関東・東北/北海道の歴史", "geo-12": "九州の工業/オセアニア・地形図", "geo-13": "東南アジア/北海道", "geo-14": "関東/ヨーロッパ・造山帯", "geo-15": "九州/北アメリカ・時差", "geo-16": "関東/ヨーロッパ・造山帯", "geo-17": "北海道・中部/ヨーロッパ・漁業", "geo-18": "近畿/世界地図", "his-1": "古代〜近世/明治の改革", "his-2": "奈良〜鎌倉/近代の外交", "his-3": "古代〜室町/江戸の外交・文化", "his-4": "奈良・鎌倉/戦国〜幕末", "his-5": "奈良・平安/南蛮・朱印船貿易", "his-6": "古代の交流/鎌倉・室町", "his-7": "農業の歴史/近代の産業", "his-8": "古代〜室町の外交/宗教改革・江戸", "his-9": "古代〜室町/開国〜憲法", "his-10": "飛鳥〜鎌倉/安土桃山〜明治", "his-11": "古代〜鎌倉/自由民権運動", "his-12": "奈良・平安/南蛮・朱印船貿易", "his-13": "古代〜戦国/明治維新", "his-14": "奈良・鎌倉/戦国〜幕末", "his-15": "奈良〜室町/殖産興業", "his-16": "院政・平氏/鎌倉・室町", "civ-1": "人権の歴史/国会", "civ-2": "多文化共生/情報社会", "civ-3": "人権/国会", "civ-4": "法の支配・憲法/企業・労働", "civ-5": "三権分立/価格・税", "civ-6": "選挙・内閣/財政", "civ-7": "裁判/価格・為替", "civ-8": "地方自治/NPO・少子化", "civ-9": "人権/日本経済・財政", "civ-10": "多文化・人権/憲法・平和", "civ-11": "財政/選挙・国際社会", "civ-12": "企業/労働・金融", "civ-13": "消費者・労働/財政・税", "civ-14": "三権分立/価格・税", "civ-15": "現代社会/対立と合意", "civ-16": "法の支配・憲法/企業・労働", "kij-1": "エネルギー", "kij-2": "環境/3R", "kij-3": "防災", "kij-4": "裁判員", "kij-5": "市場価格", "kij-6": "社会保障", "kij-7": "人口/社会保障", "kij-8": "国際社会", "kij-9": "国際社会/農業", "kij-10": "国際連合/地球温暖化"};
 const CIRC='①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱';
 
 /* ===== 解説の描き方：元の問題用紙（1240×1754）と同じ座標で打ち込む ===== */
@@ -234,7 +234,7 @@ function renderTop(){
       <header><h2>${s.name}</h2><span>${s.sub}</span></header>
       <div class="units">${Array.from({length:s.n},(_,i)=>{
         const id=`${s.key}-${i+1}`,ok=!!UNITS[id];
-        return `<button class="unit${ok?' ready':''}" ${ok?`data-go="${id}"`:'disabled'} aria-label="${s.name}の${CIRC[i]} ${UNIT_LABELS[id]||''}${ok?'':'（準備中）'}"><span class="n">${CIRC[i]}</span><span class="lb">${UNIT_LABELS[id]||''}</span></button>`}).join('')}
+        return `<button class="unit${ok?' ready':''}" ${ok?`data-go="${id}"`:'disabled'} aria-label="${s.name}の${CIRC[i]} ${(UNIT_LABELS[id]||'').replace('/','、')}${ok?'':'（準備中）'}"><span class="n">${CIRC[i]}</span><span class="lb">${(UNIT_LABELS[id]||'').replace('/','<br>')}</span></button>`}).join('')}
       </div>
     </section>`).join('')}
   </div>`;
@@ -248,7 +248,7 @@ function unit(id){
   app.innerHTML=`
   <div class="bar" style="--c:var(${s.color})">
     <button class="back" id="back">◀ 単元一覧にもどる</button>
-    <h2>${s.name}の ${CIRC[n-1]}<small>${UNIT_LABELS[id]||''}</small></h2>
+    <h2>${s.name}の ${CIRC[n-1]}<small>${(UNIT_LABELS[id]||'').replace('/','・')}</small></h2>
     <div class="tabs" role="tablist">${u.pages.map((pg,i)=>`<button class="tab" role="tab" aria-selected="${i===state.page}" data-p="${i}">${pg.label}</button>`).join('')}</div>
     <button class="kbtn${state.kaisetsu?' on':''}" id="kbtn" ${hasK?'':'hidden'}>${state.kaisetsu?'問題にもどる':'解説を見る'}</button>
   </div>

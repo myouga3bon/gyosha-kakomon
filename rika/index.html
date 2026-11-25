@@ -130,7 +130,7 @@ body{font-family:var(--body)}
 .subj h2{color:var(--fg);display:flex;align-items:center;gap:8px}
 .subj h2::before{content:"";width:18px;height:26px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:var(--c);border:2px solid var(--brown);transform:rotate(-20deg)}
 .subj header span{color:var(--muted)}
-.units{grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:6px}
+.units{grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:6px}
 .unit{aspect-ratio:auto;display:flex;align-items:center;gap:5px;text-align:left;padding:5px 7px;min-height:40px;border-radius:12px;border:2px solid var(--brown);background:var(--surface);color:var(--fg);font-size:17px;line-height:1.15}
 .unit.ready{border-color:var(--brown);background:var(--c);color:var(--fg)}
 .unit.ready:hover{filter:brightness(1.03);transform:translateY(-1px)}
@@ -169,7 +169,7 @@ const SUBJECTS=[
   {key:'chem',name:'化学', sub:'水溶液・化学変化・イオンなど', n:11, color:'--chem'},
   {key:'phys',name:'物理', sub:'光・音・ばね・力・エネルギー・運動', n:10, color:'--phys'},
 ];
-const UNIT_LABELS={"bio-1": "花のつくり", "bio-2": "光合成・茎", "bio-3": "蒸散", "bio-4": "生殖・進化", "bio-5": "光合成・細胞", "bio-6": "消化", "bio-7": "血液循環", "bio-8": "血液・食物連鎖", "bio-9": "動物の分類", "bio-10": "微生物・分解者", "bio-11": "受粉・生殖", "geo-1": "火成岩・地層", "geo-2": "鉱物・火成岩", "geo-3": "地震・気団", "geo-4": "地震・湿度", "geo-5": "地層・化石", "geo-6": "前線・火成岩", "geo-7": "天気・前線", "geo-8": "天体・季節", "geo-9": "太陽の動き", "geo-10": "天体の動き", "geo-11": "地震", "chem-1": "水溶液・濃度", "chem-2": "質量保存・酸化", "chem-3": "熱分解", "chem-4": "熱分解・気体", "chem-5": "物質の区別", "chem-6": "酸化・質量比", "chem-7": "化学変化と熱", "chem-8": "還元", "chem-9": "中和", "chem-10": "酸化・化合", "chem-11": "電気分解・イオン", "phys-1": "凸レンズ", "phys-2": "電流・電力", "phys-3": "電流・抵抗", "phys-4": "音", "phys-5": "浮力・圧力", "phys-6": "運動・エネルギー", "phys-7": "熱・電力", "phys-8": "音", "phys-9": "物体の運動", "phys-10": "力・圧力"};
+const UNIT_LABELS={"bio-1": "花のつくり/遺伝", "bio-2": "光合成/神経と反応", "bio-3": "蒸散/遺伝", "bio-4": "生殖・発生/進化", "bio-5": "光合成・細胞/細胞分裂", "bio-6": "消化/呼吸・細胞分裂", "bio-7": "血液循環/呼吸・排出", "bio-8": "心臓・血液/食物連鎖", "bio-9": "セキツイ動物/無セキツイ動物・遺伝", "bio-10": "微生物・分解者/感覚器官", "bio-11": "受粉・受精/減数分裂・進化", "geo-1": "火成岩/地層・天気", "geo-2": "鉱物・火成岩/雲のでき方", "geo-3": "地震/日本の天気", "geo-4": "地震・大地の変化/湿度・天気", "geo-5": "地層・化石/月と惑星", "geo-6": "火成岩/前線", "geo-7": "天気・前線/金星・惑星", "geo-8": "太陽・季節/火成岩", "geo-9": "太陽の動き/季節・天気", "geo-10": "天体の動き/地層・風化", "geo-11": "地震/星の動き", "chem-1": "水溶液の濃度/中和", "chem-2": "酸化・還元/質量保存", "chem-3": "熱分解/物質の分類", "chem-4": "熱分解/質量保存", "chem-5": "物質の区別/還元・分解", "chem-6": "酸化・質量比/還元", "chem-7": "発熱・吸熱反応/電気分解", "chem-8": "還元/電気分解", "chem-9": "中和/化学変化・分解", "chem-10": "酸化・化合/中和・イオン", "chem-11": "イオン・電気分解/電池・イオン", "phys-1": "光の屈折/凸レンズ", "phys-2": "電流・抵抗/仕事・エネルギー", "phys-3": "電流・抵抗/運動の速さ", "phys-4": "音/斜面と力", "phys-5": "浮力・密度/電力", "phys-6": "運動/エネルギー・凸レンズ", "phys-7": "熱の伝わり方/電流と発熱", "phys-8": "音/電流・回路", "phys-9": "運動/仕事", "phys-10": "力・圧力/浮力・電子線"};
 const CIRC='①②③④⑤⑥⑦⑧⑨⑩⑪';
 
 /* ===== 解説の描き方：元の問題用紙（1236×1749）と同じ座標で打ち込む ===== */
@@ -323,7 +323,7 @@ function renderTop(){
       <header><h2>${s.name}</h2><span>${s.sub}</span></header>
       <div class="units">${Array.from({length:s.n},(_,i)=>{
         const id=`${s.key}-${i+1}`,ok=!!UNITS[id];
-        return `<button class="unit${ok?' ready':''}" ${ok?`data-go="${id}"`:'disabled'} aria-label="${s.name}の${CIRC[i]} ${UNIT_LABELS[id]||''}${ok?'':'（準備中）'}"><span class="n">${CIRC[i]}</span><span class="lb">${UNIT_LABELS[id]||''}</span></button>`}).join('')}
+        return `<button class="unit${ok?' ready':''}" ${ok?`data-go="${id}"`:'disabled'} aria-label="${s.name}の${CIRC[i]} ${(UNIT_LABELS[id]||'').replace('/','、')}${ok?'':'（準備中）'}"><span class="n">${CIRC[i]}</span><span class="lb">${(UNIT_LABELS[id]||'').replace('/','<br>')}</span></button>`}).join('')}
       </div>
     </section>`).join('')}
   </div>`;
@@ -337,7 +337,7 @@ function unit(id){
   app.innerHTML=`
   <div class="bar" style="--c:var(${s.color})">
     <button class="back" id="back">◀ 単元一覧にもどる</button>
-    <h2>${s.name}の ${CIRC[n-1]}<small>${UNIT_LABELS[id]||''}</small></h2>
+    <h2>${s.name}の ${CIRC[n-1]}<small>${(UNIT_LABELS[id]||'').replace('/','・')}</small></h2>
     <div class="tabs" role="tablist">${u.pages.map((pg,i)=>`<button class="tab" role="tab" aria-selected="${i===state.page}" data-p="${i}">${pg.label}</button>`).join('')}</div>
     <button class="kbtn${state.kaisetsu?' on':''}" id="kbtn" ${hasK?'':'hidden'}>${state.kaisetsu?'問題にもどる':'解説を見る'}</button>
   </div>
