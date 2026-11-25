@@ -3,7 +3,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
-<title>社会カコモン類題トレーニング</title>
+<title>社会　業者カコモン類題トレーニング</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Zen+Maru+Gothic:wght@500;700;900&display=swap">
@@ -17,16 +17,6 @@
   --display:"Zen Maru Gothic","Hiragino Maru Gothic ProN","BIZ UDPGothic",sans-serif;
   --body:"BIZ UDPGothic","Hiragino Sans","Yu Gothic",sans-serif;
 }
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#141a17; --surface:#1d2521; --fg:#e8eee9; --muted:#9fb0a5; --line:#33403a;
-  --accent:#5fb98a; --accent-fg:#0d1a13; --red:#ff6b6b;
-  --exp-bg:#18343f; --exp-fg:#d7eef7; --pt:#8ab4ff;
-  --geo:#6cc792; --his:#e39a6f; --civ:#7fa9ec; --kij:#b994e6; color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#141a17; --surface:#1d2521; --fg:#e8eee9; --muted:#9fb0a5; --line:#33403a;
-  --accent:#5fb98a; --accent-fg:#0d1a13; --red:#ff6b6b;
-  --exp-bg:#18343f; --exp-fg:#d7eef7; --pt:#8ab4ff;
-  --geo:#6cc792; --his:#e39a6f; --civ:#7fa9ec; --kij:#b994e6; color-scheme:dark}
 html,body{background:var(--bg);color:var(--fg)}
 body{font-family:var(--body);font-size:15px;line-height:1.6;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 40px}
@@ -116,6 +106,58 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .switch{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;border:2px solid var(--accent);color:var(--accent);background:var(--surface);border-radius:999px;padding:6px 16px;font-family:var(--display);font-weight:700;text-decoration:none}
 .switch:hover{background:var(--accent);color:var(--accent-fg)}
 .bar .switch{padding:4px 12px;font-size:13px}
+
+/* ===== ロゴ（イナサト Flick Reading）のテイスト：クリーム地・茶色の文字・パステルの葉 ===== */
+:root{
+  --bg:#fff0dd; --surface:#fffaf2; --fg:#5e4329; --muted:#8a6a48; --line:#e2c9a6; --brown:#95714d;
+  --accent:#95714d; --accent-fg:#fffaf2; --red:#d6453d;
+  --exp-bg:#fff6e4; --exp-fg:#4a3420; --pt:#2f6fc0;
+  --leaf-pink:#f4c3c8; --leaf-orange:#f6cfa5; --leaf-yellow:#fbeaa6; --leaf-green:#c3e5cd; --leaf-blue:#bcdcf3; --leaf-lav:#d9cdf1;
+  color-scheme:light;
+}
+html,body{background:var(--bg);color:var(--fg)}
+body{font-family:var(--body)}
+.hero{align-items:flex-start;gap:8px}
+.hero .top{display:flex;align-items:center;gap:12px;width:100%;flex-wrap:wrap}
+.hero .sprig{width:44px;height:52px;flex:none}
+.hero h1 .w{display:inline-block}
+.hero .eyebrow{flex:1 1 0;min-width:0;color:var(--muted);font-family:var(--display);font-weight:700}
+.hero h1{color:var(--fg);font-size:clamp(22px,4.6vw,34px);line-height:1.35}
+.hero h1 .subj-name{display:inline-block;background:var(--leaf-c);border:2.5px solid var(--brown);border-radius:999px;padding:0 .5em;margin-right:.35em}
+.hero p{color:var(--muted)}
+.switch{margin-left:auto;align-self:center;border:2.5px solid var(--brown);color:var(--fg);background:var(--sw);border-radius:999px;padding:6px 16px;font-family:var(--display);font-weight:900;text-decoration:none;box-shadow:0 2px 0 var(--brown)}
+.switch:hover{background:var(--sw);color:var(--fg);filter:brightness(1.04);transform:translateY(-1px)}
+.subj{background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:16px}
+.subj header{border-bottom:2px dashed var(--line);padding-bottom:8px}
+.subj h2{color:var(--fg);display:flex;align-items:center;gap:8px}
+.subj h2::before{content:"";width:18px;height:26px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:var(--c);border:2px solid var(--brown);transform:rotate(-20deg)}
+.subj header span{color:var(--muted)}
+.units{grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:6px}
+.unit{aspect-ratio:auto;display:flex;align-items:center;gap:5px;text-align:left;padding:5px 7px;min-height:40px;border-radius:12px;border:2px solid var(--brown);background:var(--surface);color:var(--fg);font-size:17px;line-height:1.15}
+.unit.ready{border-color:var(--brown);background:var(--c);color:var(--fg)}
+.unit.ready:hover{filter:brightness(1.03);transform:translateY(-1px)}
+.unit .n{font-family:var(--display);font-weight:900;font-size:18px;flex:none}
+.unit .lb{font-family:var(--body);font-weight:700;font-size:10.5px;line-height:1.25;color:#5e4329;word-break:keep-all;overflow-wrap:anywhere}
+.legend{display:none}
+.bar{background:var(--bg);border-bottom:2px solid var(--line)}
+body::before{background:var(--bg)}
+.back{display:inline-flex;align-items:center;gap:6px;border:2.5px solid var(--brown);background:var(--leaf-yellow);color:var(--fg);border-radius:999px;padding:6px 14px;font-family:var(--display);font-weight:900;font-size:15px;box-shadow:0 2px 0 var(--brown)}
+.back:hover{filter:brightness(1.03)}
+.bar h2{color:var(--fg)}
+.bar h2 small{font-size:13px;color:var(--muted);font-family:var(--body);margin-left:6px}
+.tab{border:2px solid var(--line);background:var(--surface);color:var(--fg)}
+.tab[aria-selected="true"]{border-color:var(--brown);background:var(--c);color:var(--fg)}
+.kbtn{background:#f08f7a;color:#fff;border:2.5px solid var(--brown);box-shadow:0 2px 0 var(--brown);text-shadow:0 1px 0 rgba(0,0,0,.15)}
+.kbtn.on{background:var(--surface);color:var(--fg);border:2.5px solid var(--brown);text-shadow:none}
+.mode{color:var(--muted)}
+.sheet{box-shadow:0 1px 4px rgba(94,67,41,.25)}
+.panel{background:var(--surface);border:2px solid var(--brown)}
+.panel h3{color:var(--fg)}
+.panel h3 button{background:var(--bg);color:var(--fg)}
+.exp{border:1.5px dashed var(--line)}
+.ans{background:var(--surface);border:2px solid var(--line)}
+.ans li b{color:var(--fg)}
+:root{--geo:var(--leaf-green);--his:var(--leaf-pink);--civ:var(--leaf-blue);--kij:var(--leaf-lav)}
 </style>
 
 <div class="wrap" id="app"></div>
@@ -129,6 +171,7 @@ const SUBJECTS=[
   {key:'civ', name:'公民', sub:'政治・経済・国際', n:16, color:'--civ'},
   {key:'kij', name:'記述', sub:'資料を読んで書く記述問題', n:10, color:'--kij'},
 ];
+const UNIT_LABELS={"geo-1": "東南アジア・資源", "geo-2": "世界の農業・中国四国", "geo-3": "ヨーロッパ・関東", "geo-4": "資源・農林水産業", "geo-5": "中国四国・アフリカ", "geo-6": "オセアニア・近畿", "geo-7": "近畿", "geo-8": "東北", "geo-9": "北海道・中部", "geo-10": "近畿・日本の領域", "geo-11": "関東・東北", "geo-12": "工業・オセアニア", "geo-13": "東南アジア・北海道", "geo-14": "関東・ヨーロッパ", "geo-15": "九州・北アメリカ", "geo-16": "関東・ヨーロッパ", "geo-17": "日本の地域・ヨーロッパ", "geo-18": "近畿・世界", "his-1": "古代〜近世", "his-2": "奈良〜江戸", "his-3": "古代〜室町", "his-4": "奈良〜江戸", "his-5": "奈良・平安", "his-6": "古代〜鎌倉", "his-7": "農業・産業の歴史", "his-8": "平安〜室町", "his-9": "弥生〜室町", "his-10": "飛鳥〜鎌倉", "his-11": "古代〜室町", "his-12": "奈良・平安", "his-13": "古代〜戦国", "his-14": "奈良〜江戸", "his-15": "奈良〜室町", "his-16": "平安〜室町", "civ-1": "人権・地方自治・国会", "civ-2": "現代社会", "civ-3": "人権・国会・裁判", "civ-4": "憲法・経済", "civ-5": "三権・経済", "civ-6": "選挙・内閣・財政", "civ-7": "裁判・企業・消費者", "civ-8": "地方自治・社会保障", "civ-9": "人権・三権・財政", "civ-10": "現代社会・憲法", "civ-11": "財政・選挙・国際", "civ-12": "企業・労働・金融", "civ-13": "経済・財政・消費者", "civ-14": "三権・経済", "civ-15": "現代社会・共生", "civ-16": "憲法・経済", "kij-1": "エネルギー", "kij-2": "環境", "kij-3": "防災", "kij-4": "裁判員", "kij-5": "市場価格", "kij-6": "社会保障", "kij-7": "人口・社会保障", "kij-8": "国際社会", "kij-9": "国際社会・農業", "kij-10": "国際問題"};
 const CIRC='①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱';
 
 /* ===== 解説の描き方：元の問題用紙（1240×1754）と同じ座標で打ち込む ===== */
@@ -181,9 +224,8 @@ let state={page:0,kaisetsu:false};
 function renderTop(){
   app.innerHTML=`
   <section class="hero">
-    <a class="switch" href="https://myouga3bon.github.io/gyosha-kakomon/rika/" target="_top">理科へ →</a>
-    <span class="eyebrow">業者テスト 社会 ４系統 ・ 全60単元</span>
-    <h1>社会カコモン<br>類題トレーニング</h1>
+    <div class="top"><svg class="sprig" viewBox="0 0 44 52" aria-hidden="true"><path d="M22 50V12" stroke="#95714d" stroke-width="3" stroke-linecap="round"/><ellipse cx="22" cy="9" rx="6" ry="9" transform="rotate(0 22 9)" fill="#f4c3c8" stroke="#95714d" stroke-width="2"/><ellipse cx="14" cy="20" rx="6" ry="9" transform="rotate(-40 14 20)" fill="#f6cfa5" stroke="#95714d" stroke-width="2"/><ellipse cx="30" cy="20" rx="6" ry="9" transform="rotate(40 30 20)" fill="#bcdcf3" stroke="#95714d" stroke-width="2"/><ellipse cx="14" cy="32" rx="6" ry="9" transform="rotate(-40 14 32)" fill="#c3e5cd" stroke="#95714d" stroke-width="2"/><ellipse cx="30" cy="32" rx="6" ry="9" transform="rotate(40 30 32)" fill="#d9cdf1" stroke="#95714d" stroke-width="2"/><ellipse cx="14" cy="44" rx="6" ry="9" transform="rotate(-40 14 44)" fill="#fbeaa6" stroke="#95714d" stroke-width="2"/><ellipse cx="30" cy="44" rx="6" ry="9" transform="rotate(40 30 44)" fill="#f4c3c8" stroke="#95714d" stroke-width="2"/></svg><span class="eyebrow">業者テスト 社会 ４系統 ・ 全60単元</span><a class="switch" style="--sw:var(--leaf-green)" href="https://myouga3bon.github.io/gyosha-kakomon/rika/" target="_top">理科へ →</a></div>
+    <h1><span class="subj-name" style="--leaf-c:var(--leaf-orange)">社会</span><span class="w">業者カコモン</span><span class="w">類題トレーニング</span></h1>
     <p>単元をえらんで問題を解いたら、「解説を見る」ボタンで答えとポイントを確認しよう。</p>
   </section>
   <div class="legend"><span><i style="background:var(--geo)"></i>解説あり</span><span><i style="border:1.5px solid var(--line)"></i>準備中</span></div>
@@ -192,7 +234,7 @@ function renderTop(){
       <header><h2>${s.name}</h2><span>${s.sub}</span></header>
       <div class="units">${Array.from({length:s.n},(_,i)=>{
         const id=`${s.key}-${i+1}`,ok=!!UNITS[id];
-        return `<button class="unit${ok?' ready':''}" ${ok?`data-go="${id}"`:'disabled'} aria-label="${s.name}の${CIRC[i]}${ok?'':'（準備中）'}">${CIRC[i]}</button>`}).join('')}
+        return `<button class="unit${ok?' ready':''}" ${ok?`data-go="${id}"`:'disabled'} aria-label="${s.name}の${CIRC[i]} ${UNIT_LABELS[id]||''}${ok?'':'（準備中）'}"><span class="n">${CIRC[i]}</span><span class="lb">${UNIT_LABELS[id]||''}</span></button>`}).join('')}
       </div>
     </section>`).join('')}
   </div>`;
@@ -205,8 +247,8 @@ function unit(id){
   if(!hasK) state.kaisetsu=false;
   app.innerHTML=`
   <div class="bar" style="--c:var(${s.color})">
-    <button class="back" id="back">← 単元一覧</button><a class="switch" href="https://myouga3bon.github.io/gyosha-kakomon/rika/" target="_top">理科へ</a>
-    <h2>${s.name}の ${CIRC[n-1]}</h2>
+    <button class="back" id="back">◀ 単元一覧にもどる</button>
+    <h2>${s.name}の ${CIRC[n-1]}<small>${UNIT_LABELS[id]||''}</small></h2>
     <div class="tabs" role="tablist">${u.pages.map((pg,i)=>`<button class="tab" role="tab" aria-selected="${i===state.page}" data-p="${i}">${pg.label}</button>`).join('')}</div>
     <button class="kbtn${state.kaisetsu?' on':''}" id="kbtn" ${hasK?'':'hidden'}>${state.kaisetsu?'問題にもどる':'解説を見る'}</button>
   </div>
@@ -232,9 +274,7 @@ function unit(id){
       document.getElementById('pclose').onclick=()=>show(-1);
     };
     let cur=-1;
-    btns.forEach((b,i)=>b.onclick=()=>{cur=(cur===i)?-1:i;show(cur);
-      // スマホでは解説が下に出るので、問題を画面の上のほうへ動かして隠れないようにする
-      if(cur>=0&&innerWidth<900){const y=b.getBoundingClientRect().top;scrollBy({top:y-innerHeight*0.12,behavior:'smooth'})}});
+    btns.forEach((b,i)=>b.onclick=()=>{cur=(cur===i)?-1:i;show(cur);});
     show(-1);
   }
   const kb=document.getElementById('kbtn'); if(kb) kb.onclick=()=>{state.kaisetsu=!state.kaisetsu;unit(id)};
