@@ -181,6 +181,8 @@ body::before{background:var(--bg)}
 .tans[aria-expanded="true"]{background:var(--surface);color:var(--fg)}
 .tbody{margin-top:8px;display:flex;flex-direction:column;gap:6px}
 .tbody .a{font-weight:700;margin:0}
+.crop{position:relative;overflow:hidden;margin-top:8px;border:1.5px solid var(--line);border-radius:10px;background:#fff}
+.crop img{position:absolute;top:0;left:0;width:100%;height:auto;display:block}
 .qmark{position:absolute;left:0;transform:translateY(-50%);z-index:3;background:#f08f7a;color:#fff;border:2px solid #fff;border-radius:999px;padding:.15em .6em;font-weight:700;font-size:clamp(11px,1.9cqw,16px);box-shadow:0 1px 3px rgba(0,0,0,.3)}
 .guide{background:var(--surface);border:2.5px solid var(--brown);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:6px}
 .guide>h3{font-size:19px;display:flex;align-items:center;gap:8px}
@@ -248,37 +250,37 @@ for(const [key,u] of Object.entries(window.UNIT_DATA||{})){
   UNITS[id]={pages:[...u.pages.map((pg,i)=>({label:one?'問題':`問題${NUM[i]}`,img:pg.img,
       svg:pg.items.map(renderItem), skip:[],
       qs:pg.qs.map(q=>[q[0],8,q[1],q[2],q[3],q[4]==='skip'?1:0,q[4]==='hard'?1:0])})),
-    ...Array.from({length:u.sheets||0},(_,i)=>({label:'解答用紙（記入用）',img:`img/${key}-sheet${i+1}.jpg`,svg:null})),
+    ...Array.from({length:u.sheets||0},(_,i)=>({label:'解答用紙（記入用）',img:`img/${key}-sheet${i+1}.png`,svg:null})),
     {label:'正答',img:`img/${key}-ans.jpg`,svg:null,rot:u.rot}]};
 }
 
 const app=document.getElementById('app');
 const THEMES=[
- {f:'geo',id:'chikeizu',name:'地形図の読み取り',re:/地形図|等高線|縮尺|分の1 |分の1→|千分の1|万分の1|地図記号|実際の距離|標高/},
- {f:'geo',id:'graph',name:'グラフ・表の読み取り',re:/資料\d*[：:].{0,40}(％|%|倍|増|減|多|少)|✓|グラフ|割合|人口密度|÷|約\d+(\.\d+)?倍/},
- {f:'geo',id:'jisa',name:'時差・緯度経度・世界地図',re:/時差|経度|緯度|経線|緯線|本初子午線|日付変更線|図法|正距方位|メルカトル|東経|西経|北緯|南緯|対せき/},
- {f:'geo',id:'kiko',name:'気候・雨温図',re:/気候|雨温図|季節風|降水量|乾季|雨季|やませ|梅雨|台風/},
- {f:'geo',id:'nogyo',name:'農業・漁業',re:/農業|稲作|畑作|栽培|果樹|畜産|酪農|漁業|水産|養殖|米|小麦|とうもろこし|プランテーション|近郊農業|促成|抑制/},
- {f:'geo',id:'kogyo',name:'工業・資源・エネルギー',re:/工業|工場|製鉄|自動車|コンビナート|原油|石油|石炭|鉄鉱石|資源|発電|エネルギー|伝統工芸/},
- {f:'geo',id:'shizen',name:'地形・海流・防災',re:/造山帯|山脈|平野|盆地|扇状地|三角州|カルデラ|フィヨルド|リアス|暖流|寒流|潮目|黒潮|親潮|ハザードマップ|防災|災害|フォッサマグナ|砂丘|流域|ヒートアイランド/},
- {f:'geo',id:'sekai',name:'世界の諸地域',re:/アジア|ヨーロッパ|アフリカ|北アメリカ|南アメリカ|オセアニア|オーストラリア|EU|ASEAN|宗教|イスラム|キリスト教/},
- {f:'geo',id:'nihon',name:'日本の諸地域',re:/北海道|東北|関東|中部|近畿|中国・四国|中国地方|四国|九州|沖縄|県庁所在地|都道府県|県$/},
- {f:'his',id:'kodai',name:'古代（縄文〜平安）',re:/縄文|弥生|古墳|飛鳥|奈良時代|平安|聖徳太子|大化の改新|律令|班田|墾田|遣唐使|摂関|国風文化|天平/},
- {f:'his',id:'chusei',name:'中世（鎌倉・室町）',re:/鎌倉|室町|御恩|奉公|承久|御成敗式目|元寇|守護|地頭|足利|勘合|応仁|下剋上|戦国|一揆|徳政/},
- {f:'his',id:'kinsei',name:'近世（安土桃山・江戸）',re:/織田|豊臣|秀吉|信長|太閤検地|刀狩|江戸|徳川|鎖国|朱印|参勤交代|享保|寛政|天保|株仲間|元禄|化政|異国船/},
- {f:'his',id:'kindai',name:'近代以降（明治〜現代）',re:/明治|大正|昭和|開国|日米|条約改正|自由民権|憲法|日清|日露|第一次世界大戦|第二次世界大戦|戦後|高度経済成長|地租改正|殖産興業|富国強兵|18[5-9]\d年|19\d\d年|20\d\d年/},
- {f:'his',id:'gaiko',name:'外交・貿易',re:/貿易|遣唐使|遣隋使|朝貢|勘合|南蛮|朱印|鎖国|開国|条約|外交|日宋|日明|宋銭|元寇|隋|唐|朝鮮|琉球|オランダ|ポルトガル|ペリー|領事裁判権|関税自主権/},
- {f:'his',id:'bunka',name:'文化',re:/文化|和歌|万葉集|古今|源氏物語|浮世絵|錦絵|仏教|寺|神社|書院造|水墨画|能|歌舞伎|茶の湯|蘭学|国学/},
- {f:'his',id:'shiryo',name:'資料・グラフの読み取り',re:/資料\d*[：:]|グラフ|年表|資料\d+(から|で|は|の)/},
- {f:'civ',id:'jinken',name:'人権・憲法',re:/人権|憲法|自由権|社会権|平等権|参政権|請求権|公共の福祉|新しい人権|プライバシー|国民主権|平和主義|立憲|法の支配/},
- {f:'civ',id:'sanken',name:'国会・内閣・裁判所',re:/国会|衆議院|参議院|内閣|首相|総理|裁判|三権|違憲|弾劾|国民審査|議院内閣制/},
- {f:'civ',id:'senkyo',name:'選挙・地方自治',re:/選挙|投票|比例代表|小選挙区|一票の格差|地方自治|条例|首長|知事|直接請求|地方交付税|地方分権/},
- {f:'civ',id:'keizai',name:'経済（価格・企業・労働・金融）',re:/価格|需要|供給|企業|株式|労働|賃金|日本銀行|金融|景気|為替|円高|円安|消費者|契約/},
- {f:'civ',id:'zaisei',name:'財政・税・社会保障',re:/財政|税|歳入|歳出|国債|社会保障|年金|社会保険|公的扶助|累進/},
- {f:'civ',id:'gendai',name:'現代社会（情報・共生・少子高齢化）',re:/情報|リテラシー|共生|多文化|異文化|少子|高齢|グローバル|男女|伝統文化|対立|合意|効率|公正/},
- {f:'civ',id:'cshiryo',name:'資料・グラフの読み取り',re:/資料\d*[：:]|グラフ|✓/},
- {f:'civ',id:'kokusai',name:'国際社会・環境',re:/国際連合|国連|安全保障理事会|拒否権|PKO|ODA|地球温暖化|環境|SDGs|持続可能|難民|核兵器|EU|APEC|ASEAN|3R|リサイクル|リデュース|京都議定書|パリ協定|国際分業/},
- {f:'kij',id:'kijutsu',name:'資料を使った記述',re:/./},
+ {f:'geo',id:'chikeizu',g:'S',name:'地形図の読み取り',re:/地形図|等高線|縮尺|\d{4,}分の1|万分の1|千分の1|地図記号|実際の距離|実際の面積/},
+ {f:'geo',id:'graph',g:'S',name:'グラフ・表の読み取り',re:/^\s*資料\d*[：:は].*?\d|[✓✕].*[✓✕]|グラフ.*?(増|減|倍|％)|約\d+(\.\d+)?倍|÷/},
+ {f:'geo',id:'jisa',g:'main',name:'時差・緯度経度・世界地図',re:/時差|経度|緯度|経線|緯線|本初子午線|日付変更線|図法|正距方位|メルカトル|東経|西経|北緯|南緯|対せき/},
+ {f:'geo',id:'kiko',g:'main',name:'気候・雨温図',re:/気候|雨温図|季節風|降水量|乾季|雨季|やませ|梅雨|台風/},
+ {f:'geo',id:'nogyo',g:'main',name:'農業・漁業',re:/農業|稲作|畑作|栽培|果樹|畜産|酪農|漁業|水産|養殖|米|小麦|とうもろこし|プランテーション|近郊農業|促成|抑制/},
+ {f:'geo',id:'kogyo',g:'main',name:'工業・資源・エネルギー',re:/工業|工場|製鉄|自動車|コンビナート|原油|石油|石炭|鉄鉱石|資源|発電|エネルギー|伝統工芸/},
+ {f:'geo',id:'shizen',g:'main',name:'地形・海流・防災',re:/造山帯|山脈|平野|盆地|扇状地|三角州|カルデラ|フィヨルド|リアス|暖流|寒流|潮目|黒潮|親潮|ハザードマップ|防災|災害|フォッサマグナ|砂丘|流域|ヒートアイランド/},
+ {f:'geo',id:'sekai',g:'main',name:'世界の諸地域',re:/アジア|ヨーロッパ|アフリカ|北アメリカ|南アメリカ|オセアニア|オーストラリア|EU|ASEAN|宗教|イスラム|キリスト教/},
+ {f:'geo',id:'nihon',g:'main',name:'日本の諸地域',re:/北海道|東北|関東|中部|近畿|中国・四国|中国地方|四国|九州|沖縄|県庁所在地|都道府県|県$/},
+ {f:'his',id:'kodai',g:'era',name:'古代（縄文〜平安）',re:/縄文|弥生|古墳|飛鳥|奈良時代|平安|聖徳太子|大化の改新|律令|班田|墾田|遣唐使|摂関|国風文化|天平/},
+ {f:'his',id:'chusei',g:'era',name:'中世（鎌倉・室町）',re:/鎌倉|室町|御恩|奉公|承久|御成敗式目|元寇|守護|地頭|足利|勘合|応仁|下剋上|戦国|一揆|徳政/},
+ {f:'his',id:'kinsei',g:'era',name:'近世（安土桃山・江戸）',re:/織田|豊臣|秀吉|信長|太閤検地|刀狩|江戸|徳川|鎖国|朱印|参勤交代|享保|寛政|天保|株仲間|元禄|化政|異国船/},
+ {f:'his',id:'kindai',g:'era',name:'近代以降（明治〜現代）',re:/明治|大正|昭和|開国|日米|条約改正|自由民権|憲法|日清|日露|第一次世界大戦|第二次世界大戦|戦後|高度経済成長|地租改正|殖産興業|富国強兵|18[5-9]\d年|19\d\d年|20\d\d年/},
+ {f:'his',id:'gaiko',g:'top2',name:'外交・貿易',re:/貿易|遣唐使|遣隋使|朝貢|勘合|南蛮|朱印|鎖国|開国|条約|外交|日宋|日明|宋銭|元寇|隋|唐|朝鮮|琉球|オランダ|ポルトガル|ペリー|領事裁判権|関税自主権/},
+ {f:'his',id:'bunka',g:'top2',name:'文化',re:/文化|和歌|万葉集|古今|源氏物語|浮世絵|錦絵|仏教|寺|神社|書院造|水墨画|能|歌舞伎|茶の湯|蘭学|国学/},
+ {f:'his',id:'shiryo',g:'S',name:'資料・グラフの読み取り',re:/^\s*資料\d*[：:は].*?\d|[✓✕].*[✓✕]|グラフ.*?(増|減|倍|％)/},
+ {f:'civ',id:'jinken',g:'main',name:'人権・憲法',re:/人権|自由|検閲|憲法|自由権|社会権|平等権|参政権|請求権|公共の福祉|新しい人権|プライバシー|国民主権|平和主義|立憲|法の支配/},
+ {f:'civ',id:'sanken',g:'main',name:'国会・内閣・裁判所',re:/国会|立法|行政|司法|本会議|委員会|控訴|上告|三審制|起訴|審理|衆議院|参議院|内閣|首相|総理|裁判|三権|違憲|弾劾|国民審査|議院内閣制/},
+ {f:'civ',id:'senkyo',g:'main',name:'選挙・地方自治',re:/選挙|ドント|オンブズ|NPO|住民|投票|比例代表|小選挙区|一票の格差|地方自治|条例|首長|知事|直接請求|地方交付税|地方分権/},
+ {f:'civ',id:'keizai',g:'main',name:'経済（価格・企業・労働・金融）',re:/価格|CSR|POS|流通|事業所|中小企業|大企業|需要|供給|企業|株式|労働|賃金|日本銀行|金融|景気|為替|円高|円安|消費者|契約/},
+ {f:'civ',id:'zaisei',g:'main',name:'財政・税・社会保障',re:/財政|国民負担|税|歳入|歳出|国債|社会保障|年金|社会保険|公的扶助|累進/},
+ {f:'civ',id:'gendai',g:'main',name:'現代社会（情報・共生・少子高齢化）',re:/情報|外国人|多言語|リテラシー|共生|多文化|異文化|少子|高齢|グローバル|男女|伝統文化|対立|合意|効率|公正/},
+ {f:'civ',id:'cshiryo',g:'S',name:'資料・グラフの読み取り',re:/^\s*資料\d*[：:は].*?\d|[✓✕].*[✓✕]|グラフ.*?(増|減|倍|％)|約\d+(\.\d+)?倍/},
+ {f:'civ',id:'kokusai',g:'main',name:'国際社会・環境',re:/国際連合|国連|安全保障理事会|拒否権|PKO|ODA|地球温暖化|環境|SDGs|持続可能|難民|核兵器|EU|APEC|ASEAN|3R|リサイクル|リデュース|京都議定書|パリ協定|国際分業/},
+ {f:'kij',id:'kijutsu',g:'S',name:'資料を使った記述',re:/./},
 ];
 const GUIDE={
 chikeizu:{k:['<b>縮尺</b>：2万5千分の1 → 地図上の1cm＝<b>250m</b>、5万分の1 → 1cm＝<b>500m</b>。','<b>等高線</b>：2万5千分の1では主曲線が<b>10m</b>ごと、5万分の1では<b>20m</b>ごと。','等高線の間かくが<b>せまい</b>＝傾斜が急、<b>広い</b>＝ゆるやか。','おもな地図記号：田（‖）、畑（∨）、果樹園（○）、茶畑（∴）、広葉樹林、針葉樹林、学校（文）、病院、郵便局（〒）、寺（卍）、神社（鳥居の形）、老人ホーム、図書館など。'],
@@ -357,17 +359,39 @@ kijutsu:{k:['記述問題は「<b>何を答えるか</b>」を最初に確認（
  t:['書き方の型：「資料1から〜とわかる。資料2から〜とわかる。そのため（だから）〜。」','理由を聞かれたら文末は「<b>〜から。</b>」「<b>〜ため。</b>」','立場を選ぶ問題（ア・イどちらか）：どちらを選んでもよいので、<b>選んだ理由を資料で</b>裏づける。','指定語句があるときは、必ずその言葉を使い、下線を引くなど目立たせる。'],
  m:['「〜と思う」だけの感想は×。資料の事実＋知識で書く。','<i>主語と述語を対応させ、1文を長くしすぎない</i>']},
 };
-/* ===== テーマ別対策：全単元の設問を、解説の中身（キーワード）でテーマに振り分ける ===== */
+const PW=1240,PH=1754;
+/* ===== テーマ別対策：設問ごとに、解説のキーワードの点数がいちばん高いテーマにだけ入れる ===== */
 const stripTags=s=>String(s).replace(/<[^>]+>/g,'');
-function themeItems(t){
-  const out=[];
-  for(const s of SUBJECTS){ if(s.key!==t.f) continue;
-    for(let n=1;n<=s.n;n++){ const id=`${s.key}-${n}`,u=UNITS[id]; if(!u) continue;
-      u.pages.forEach((pg,pi)=>(pg.qs||[]).forEach((q,qi)=>{ if(q[5]) return;
-        if(t.re.test(stripTags(q[3]+' '+q[4]))) out.push({id,n,s,pi,qi,pg,q}); })); } }
+const gre=t=>t._g||(t._g=new RegExp(t.re.source,'g'));
+function tscore(t,ans,exp){
+  const bold=(String(exp).match(/<b>.*?<\/b>/g)||[]).join(' ');
+  const c=s=>{const m=stripTags(s).match(gre(t));return m?new Set(m).size:0};
+  return c(ans)*3+c(bold)*2+c(exp);
+}
+function classify(q,f){
+  const out=new Set(),ts=THEMES.filter(t=>t.f===f),groups={};
+  for(const t of ts){
+    if(t.g==='S'){ if(t.re.test(stripTags(q[4]))||t.re.test(stripTags(q[3]))) out.add(t.id); continue; }
+    (groups[t.g]=groups[t.g]||[]).push([t.id,tscore(t,q[3],q[4])]);
+  }
+  for(const [g,arr] of Object.entries(groups)){
+    const best=Math.max(...arr.map(a=>a[1]));
+    if(best<(g==='top2'?3:1)) continue;
+    arr.forEach(([id,sc])=>{ if(sc===best) out.add(id); });
+  }
   return out;
 }
+const ALLQ=[];
+for(const s of SUBJECTS) for(let n=1;n<=s.n;n++){ const id=`${s.key}-${n}`,u=UNITS[id]; if(!u) continue;
+  u.pages.forEach((pg,pi)=>(pg.qs||[]).forEach((q,qi)=>{ if(q[5]) return; ALLQ.push({id,n,s,pi,qi,pg,q,th:classify(q,s.key)}); })); }
+const themeItems=t=>ALLQ.filter(it=>it.th.has(t.id));
 const THEME_COUNT={}; THEMES.forEach(t=>THEME_COUNT[t.id]=themeItems(t).length);
+function cropHTML(it){
+  const y=it.q[2], nexts=it.pg.qs.map(x=>x[2]).filter(v=>v>y+15).sort((a,b)=>a-b);
+  const y0=Math.max(0,y-24), y1=Math.min(PH-20, nexts.length?nexts[0]-22:y+420), h=Math.max(60,Math.min(y1-y0,nexts.length?700:420));
+  const X0=0.06,XW=0.9; // 左右の余白を切って少し大きく見せる
+  return `<div class="crop" style="padding-top:${(h/(PW*XW)*100).toFixed(2)}%"><img src="${it.pg.img}" alt="" loading="lazy" style="width:${(100/XW).toFixed(3)}%;left:-${(X0/XW*100).toFixed(3)}%;transform:translateY(-${(y0/PH*100).toFixed(3)}%)"></div>`;
+}
 
 function renderThemes(){
   app.innerHTML=`
@@ -395,14 +419,15 @@ function renderTheme(tid){
     <h4>まずおさえること</h4><ul>${GUIDE[tid].k.map(x=>`<li>${x}</li>`).join('')}</ul>
     <h4 class="t2">よく出る問われ方と解き方</h4><ul>${GUIDE[tid].t.map(x=>`<li>${x}</li>`).join('')}</ul>
     <h4 class="t3">まちがえやすいところ</h4><ul>${GUIDE[tid].m.map(x=>`<li>${x}</li>`).join('')}</ul></section>`:''}
-  <p class="mode">ポイントを読んだら、下の問題で練習しよう。「問題を解く」で問題ページのその設問へ。解いたら「答えと解説」で確認しよう。</p>
+  <p class="mode">ポイントを読んだら、下の問題で練習しよう。問題文を読んで解いたら「答えと解説」で確認しよう。図や資料が見たいときは「ページ全体で見る」へ。</p>
   <ol class="tlist" style="--c:var(${s.color})">${items.map((it,i)=>{
     const head=it.id!==lastU?`<li class="tu"><b>${s.name}の ${CIRC[it.n-1]}</b><small>${(UNIT_LABELS[it.id]||'').replace('/','・')}</small></li>`:'';
     lastU=it.id;
     return head+`<li class="ti">
       <div class="trow"><span class="tq">${it.pg.label}　${it.q[0]}${it.q[6]?' <span class="hard">ムズ</span>':''}</span>
-        <a class="tgo" href="#${it.id}@${it.pi}@${it.qi}">問題を解く ▶</a>
+        <a class="tgo" href="#${it.id}@${it.pi}@${it.qi}">ページ全体で見る ▶</a>
         <button class="tans" data-i="${i}" aria-expanded="false">答えと解説</button></div>
+      ${cropHTML(it)}
       <div class="tbody" id="tb${i}" hidden><p class="a">こたえ：${it.q[3]}</p><p class="exp">${it.q[4]}</p></div></li>`}).join('')}
   </ol>`;
   document.getElementById('back').onclick=()=>{location.hash='themes'};

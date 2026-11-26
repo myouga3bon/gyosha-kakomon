@@ -179,6 +179,8 @@ body::before{background:var(--bg)}
 .tans[aria-expanded="true"]{background:var(--surface);color:var(--fg)}
 .tbody{margin-top:8px;display:flex;flex-direction:column;gap:6px}
 .tbody .a{font-weight:700;margin:0}
+.crop{position:relative;overflow:hidden;margin-top:8px;border:1.5px solid var(--line);border-radius:10px;background:#fff}
+.crop img{position:absolute;top:0;left:0;width:100%;height:auto;display:block}
 .qmark{position:absolute;left:0;transform:translateY(-50%);z-index:3;background:#f08f7a;color:#fff;border:2px solid #fff;border-radius:999px;padding:.15em .6em;font-weight:700;font-size:clamp(11px,1.9cqw,16px);box-shadow:0 1px 3px rgba(0,0,0,.3)}
 .guide{background:var(--surface);border:2.5px solid var(--brown);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:6px}
 .guide>h3{font-size:19px;display:flex;align-items:center;gap:8px}
@@ -223,7 +225,7 @@ const DEFS=`<defs>${[R,B,G].map(c=>`<marker id="ah${c.slice(1)}" viewBox="0 0 10
 const UNITS={
  'bio-1':{
   pages:[
-   {label:'問題（1枚目）', img:'img/bio1-1.jpg', svg:[
+   {label:'問題（1枚目）', img:'img/bio1-1.png', svg:[
      // 図1：外側から順に
      O(400,368,34,24), L(318,432,372,388,R,3,true), TL(268,462,32,R,['外','側'],1.15),
      O(855,455,50,64), T(855,548,26,R,'おしべ','middle'),
@@ -259,7 +261,7 @@ const UNITS={
      ['(4)',8,1426,'あ：胚珠　い：e（子房）',
       '図3の小さな粒は、子房の中にある<b>胚珠</b>。<br>受粉すると、<br>　<b>胚珠</b> → <b>種子</b>になる<br>　<b>子房</b> → <b>果実</b>になる<br>図4のタンポポでは、下のふくらんだ部分<b>e</b>が子房。<br>胚珠はこの子房の中にある。'],
    ]},
-   {label:'問題（2枚目）', img:'img/bio1-2.jpg', svg:[
+   {label:'問題（2枚目）', img:'img/bio1-2.png', svg:[
      O(1000,263,76,28),
      // 表
      T(604,484,22,R,'すべて黄色'), L(735,495,758,480,R,2.5,true),
@@ -309,7 +311,7 @@ const UNITS={
      ['(8)',8,1221,'お：ウ　か：イ',
       'Aは最初に1つだけ分かれている。<br>お：体温が<b>変わらない</b>（恒温動物）のはハトだけ<br>　→ お＝<b>ウ</b>、A＝ハト<br>か：<b>陸上に殻のある卵</b>をうむのはトカゲ<br>　（フナは水中に殻のない卵をうむ）<br>　→ か＝<b>イ</b>、B＝トカゲ、C＝フナ'],
    ]},
-   {label:'解答用紙', img:'img/bio1-ans.jpg', svg:null},
+   {label:'解答用紙', img:'img/bio1-sheet.png', svg:null},
   ],
  }
 };
@@ -338,43 +340,43 @@ for(const [key,u] of Object.entries(window.UNIT_DATA||{})){
   UNITS[id]={pages:[...u.pages.map((pg,i)=>({label:LABELS[i],img:pg.img,
       svg:pg.items.map(renderItem), skip:pg.skip.map(renderItem),
       qs:pg.qs.map(q=>[q[0],8,q[1],q[2],q[3],q[4]==='skip'?1:0,q[4]==='hard'?1:0])})),
-    {label:'解答用紙',img:`img/${key}-ans.jpg`,svg:null}]};
+    {label:'解答用紙',img:`img/${key}-sheet.png`,svg:null}]};
 }
 
 const app=document.getElementById('app');
 const THEMES=[
- {f:'bio',id:'kansatsu',name:'観察・実験器具',re:/顕微鏡|プレパラート|レボルバー|ルーペ|双眼実体|視野|対物レンズ|接眼レンズ|ピント/},
- {f:'bio',id:'shokubutsu',name:'植物のつくり・花',re:/花弁|おしべ|めしべ|がく|子房|胚珠|柱頭|裸子|被子|双子葉|単子葉|維管束|道管|師管|根毛|ひげ根|主根|葉脈|シダ|コケ|胞子/},
- {f:'bio',id:'kogosei',name:'光合成・呼吸',re:/光合成|葉緑体|デンプン|ヨウ素|対照実験|石灰水|BTB|呼吸/},
- {f:'bio',id:'jousan',name:'蒸散（蒸散量の計算）',re:/蒸散|気孔|ワセリン|水面から/},
- {f:'bio',id:'shoka',name:'消化・吸収',re:/消化|だ液|アミラーゼ|ペプシン|胆汁|すい液|柔毛|ブドウ糖|アミノ酸|脂肪酸|ベネジクト/},
- {f:'bio',id:'junkan',name:'血液循環・排出',re:/心臓|心房|心室|動脈|静脈|血液|赤血球|白血球|血小板|血しょう|ヘモグロビン|組織液|肺胞|じん臓|肝臓|尿/},
- {f:'bio',id:'shinkei',name:'感覚器官・神経',re:/神経|せきずい|反射|反応|網膜|鼓膜|感覚器官|筋肉|けん|関節|骨格/},
- {f:'bio',id:'bunrui',name:'動物の分類・進化',re:/セキツイ|ハチュウ|両生類|魚類|鳥類|ほにゅう|恒温|変温|胎生|卵生|節足|軟体|外とう膜|相同器官|進化/},
- {f:'bio',id:'iden',name:'生殖・遺伝・細胞分裂',re:/遺伝|Aa|細胞分裂|成長点|根の先|塩酸であたため|AA|aa|純系|優性|顕性|潜性|分離の法則|減数分裂|体細胞分裂|染色体|受精|生殖|発生|精細胞|卵細胞|花粉管/},
- {f:'bio',id:'seitai',name:'食物連鎖・微生物',re:/食物連鎖|生産者|消費者|分解者|微生物|菌類|細菌|カビ|乳酸菌|ミミズ|トビムシ/},
- {f:'geo',id:'kasei',name:'火山・火成岩・鉱物',re:/火成岩|深成岩|火山岩|斑状|等粒状|斑晶|石基|鉱物|マグマ|花こう岩|安山岩|玄武岩|流紋岩|せん緑岩|はんれい岩|火山/},
- {f:'geo',id:'chiso',name:'地層・化石',re:/地層|化石|示相|示準|凝灰岩|れき岩|砂岩|泥岩|石灰岩|チャート|堆積|しゅう曲|断層|風化|侵食|柱状図|かぎ層|れき|泥|粒/},
- {f:'geo',id:'jishin',name:'地震（計算・グラフ）',re:/地震|震源|震央|初期微動|主要動|P波|S波|震度|マグニチュード|km\/s|プレート/},
- {f:'geo',id:'tenki',name:'天気・前線・気団',re:/前線|気団|低気圧|高気圧|季節風|天気図|風向|風力|等圧線|積乱雲|乱層雲|偏西風|西高東低|移動性/},
- {f:'geo',id:'shitsudo',name:'湿度・露点・雲のでき方',re:/湿度|露点|飽和水蒸気量|乾球|湿球|雲のでき|膨張|気圧が下が/},
- {f:'geo',id:'taiyo',name:'太陽の動き・季節',re:/南中|太陽の動き|日の出|日の入り|影|サインペン|日周運動|透明半球|夏至|冬至|春分|秋分|昼の長さ|地軸|23\.4/},
- {f:'geo',id:'hoshi',name:'星・月・惑星',re:/星座|星|オリオン|さそり|おうし|年周運動|公転|月|金星|惑星|衛星|満月|新月|明けの|よいの|内惑星|1日に約1°/},
- {f:'chem',id:'suiyoeki',name:'水溶液・濃度・溶解度',re:/濃度|溶解度|溶質|溶媒|溶液|再結晶|飽和|結晶|とける量/},
- {f:'chem',id:'jotai',name:'状態変化・蒸留・実験器具',re:/融点|沸点|蒸留|状態変化|メスシリンダー|ガスバーナー|混合物|純粋な物質|体積/},
- {f:'chem',id:'kitai',name:'気体・物質の区別',re:/酸素|二酸化炭素|水素|アンモニア|窒素|塩素|上方置換|下方置換|水上置換|密度|有機物|無機物|砂糖|食塩|デンプン/},
- {f:'chem',id:'bunkai',name:'分解（熱分解・電気分解）',re:/分解|炭酸水素ナトリウム|酸化銀|塩化コバルト|フェノールフタレイン/},
- {f:'chem',id:'sanka',name:'酸化・還元・化学変化と熱',re:/発熱|吸熱|酸化|還元|燃焼|酸化銅|酸化マグネシウム|スチールウール|硫化/},
- {f:'chem',id:'shitsuryo',name:'質量の変化（比の計算）',re:/質量保存|：\d|\d：\d|質量比|ふえなくなる|\d\.\dg/},
- {f:'chem',id:'ion',name:'イオン・電気分解・電池',re:/イオン|電離|電解質|陽極|陰極|電子|電池|Cu²⁺|Zn²⁺|Cl⁻|Na⁺|H⁺|OH⁻/},
- {f:'chem',id:'chuwa',name:'酸・アルカリ・中和',re:/中和|酸性|アルカリ性|中性|BTB|pH|塩酸|水酸化ナトリウム|硫酸バリウム/},
- {f:'phys',id:'hikari',name:'光・凸レンズ',re:/光|像|レンズ|反射|屈折|凸レンズ|焦点|実像|虚像|全反射/},
- {f:'phys',id:'oto',name:'音',re:/音|振動数|振幅|Hz|オシロスコープ|弦/},
- {f:'phys',id:'denryu',name:'電流・電圧・抵抗',re:/電流|電圧|抵抗|Ω|直列|並列|電流計|電圧計|オーム/},
- {f:'phys',id:'denryoku',name:'電力・熱',re:/伝導|対流|放射|電力|W|熱量|J|電力量|発熱/},
- {f:'phys',id:'jiba',name:'磁界・電磁誘導・静電気',re:/磁界|帯電|電気（電子）|磁石|電磁誘導|誘導電流|コイル|フレミング|静電気|陰極線|電子線|真空放電/},
- {f:'phys',id:'chikara',name:'力・圧力・浮力',re:/力|ばね|フックの法則|圧力|Pa|浮力|水圧|重力|垂直抗力|分力|合力/},
- {f:'phys',id:'undo',name:'運動・仕事・エネルギー',re:/速さ|cm\/s|打点|テープ|等速直線|記録タイマー|斜面|仕事|仕事率|位置エネルギー|運動エネルギー|力学的エネルギー|慣性|作用・反作用/},
+ {f:'bio',id:'kansatsu',g:'main',name:'観察・実験器具',re:/顕微鏡|プレパラート|レボルバー|ルーペ|双眼実体|視野|対物レンズ|接眼レンズ|ピント/},
+ {f:'bio',id:'shokubutsu',g:'main',name:'植物のつくり・花',re:/花弁|おしべ|めしべ|がく|子房|胚珠|柱頭|裸子|被子|双子葉|単子葉|維管束|道管|師管|根毛|ひげ根|主根|葉脈|シダ|コケ|胞子/},
+ {f:'bio',id:'kogosei',g:'main',name:'光合成・呼吸',re:/光合成|葉緑体|デンプン|ヨウ素|対照実験|石灰水|BTB|呼吸/},
+ {f:'bio',id:'jousan',g:'main',name:'蒸散（蒸散量の計算）',re:/蒸散|気孔|ワセリン|水面から/},
+ {f:'bio',id:'shoka',g:'main',name:'消化・吸収',re:/消化|だ液|アミラーゼ|ペプシン|胆汁|すい液|柔毛|ブドウ糖|アミノ酸|脂肪酸|ベネジクト/},
+ {f:'bio',id:'junkan',g:'main',name:'血液循環・排出',re:/心臓|心房|心室|動脈|静脈|血液|赤血球|白血球|血小板|血しょう|ヘモグロビン|組織液|肺胞|じん臓|肝臓|尿/},
+ {f:'bio',id:'shinkei',g:'main',name:'感覚器官・神経',re:/神経|せきずい|反射|反応|コマ|網膜|鼓膜|感覚器官|筋肉|けん|関節|骨格/},
+ {f:'bio',id:'bunrui',g:'main',name:'動物の分類・進化',re:/セキツイ|ハチュウ|両生類|魚類|鳥類|ほにゅう|恒温|変温|胎生|卵生|節足|軟体|外とう膜|相同器官|進化/},
+ {f:'bio',id:'iden',g:'main',name:'生殖・遺伝・細胞分裂',re:/遺伝|Aa|受けつぐ|細胞分裂|成長点|根の先|塩酸であたため|AA|aa|純系|優性|顕性|潜性|分離の法則|減数分裂|体細胞分裂|染色体|受精|生殖|発生|精細胞|卵細胞|花粉管/},
+ {f:'bio',id:'seitai',g:'main',name:'食物連鎖・微生物',re:/食物連鎖|草食|肉食|生産者|消費者|分解者|微生物|菌類|細菌|カビ|乳酸菌|ミミズ|トビムシ/},
+ {f:'geo',id:'kasei',g:'main',name:'火山・火成岩・鉱物',re:/火成岩|深成岩|火山岩|斑状|等粒状|斑晶|石基|鉱物|マグマ|花こう岩|安山岩|玄武岩|流紋岩|せん緑岩|はんれい岩|火山/},
+ {f:'geo',id:'chiso',g:'main',name:'地層・化石',re:/地層|化石|示相|示準|凝灰岩|れき岩|砂岩|泥岩|石灰岩|チャート|堆積|しゅう曲|断層|風化|侵食|柱状図|かぎ層|れき|泥|粒/},
+ {f:'geo',id:'jishin',g:'main',name:'地震（計算・グラフ）',re:/地震|震源|震央|初期微動|主要動|P波|S波|震度|マグニチュード|km\/s|プレート/},
+ {f:'geo',id:'tenki',g:'main',name:'天気・前線・気団',re:/前線|気団|低気圧|高気圧|季節風|天気図|風向|風力|等圧線|積乱雲|乱層雲|偏西風|西高東低|移動性/},
+ {f:'geo',id:'shitsudo',g:'main',name:'湿度・露点・雲のでき方',re:/湿度|露点|飽和水蒸気量|乾球|湿球|雲のでき|膨張|気圧が下が/},
+ {f:'geo',id:'taiyo',g:'main',name:'太陽の動き・季節',re:/南中|太陽の動き|日の出|日の入り|影|サインペン|日周運動|透明半球|夏至|冬至|春分|秋分|昼の長さ|地軸|23\.4/},
+ {f:'geo',id:'hoshi',g:'main',name:'星・月・惑星',re:/星座|星|オリオン|さそり|おうし|年周運動|公転|月|金星|惑星|衛星|満月|新月|明けの|よいの|内惑星|1日に約1°/},
+ {f:'chem',id:'suiyoeki',g:'main',name:'水溶液・濃度・溶解度',re:/濃度|溶解度|溶質|溶媒|溶液|再結晶|飽和|結晶|とける量/},
+ {f:'chem',id:'jotai',g:'main',name:'状態変化・蒸留・実験器具',re:/融点|沸点|蒸留|状態変化|メスシリンダー|ガスバーナー|混合物|純粋な物質|体積/},
+ {f:'chem',id:'kitai',g:'main',name:'気体・物質の区別',re:/酸素|二酸化炭素|水素|アンモニア|窒素|塩素|上方置換|下方置換|水上置換|密度|有機物|無機物|砂糖|食塩|デンプン/},
+ {f:'chem',id:'bunkai',g:'main',name:'分解（熱分解・電気分解）',re:/分解|炭酸水素ナトリウム|酸化銀|塩化コバルト|フェノールフタレイン/},
+ {f:'chem',id:'sanka',g:'main',name:'酸化・還元・化学変化と熱',re:/発熱|吸熱|酸化|還元|燃焼|酸化銅|酸化マグネシウム|スチールウール|硫化/},
+ {f:'chem',id:'shitsuryo',g:'main',name:'質量の変化（比の計算）',re:/質量保存|：\d|\d：\d|質量比|ふえなくなる|\d\.\dg/},
+ {f:'chem',id:'ion',g:'main',name:'イオン・電気分解・電池',re:/イオン|電離|電解質|陽極|陰極|電子|電池|Cu²⁺|Zn²⁺|Cl⁻|Na⁺|H⁺|OH⁻/},
+ {f:'chem',id:'chuwa',g:'main',name:'酸・アルカリ・中和',re:/中和|酸性|アルカリ性|中性|BTB|pH|塩酸|水酸化ナトリウム|硫酸バリウム/},
+ {f:'phys',id:'hikari',g:'main',name:'光・凸レンズ',re:/光|像|レンズ|反射|屈折|凸レンズ|焦点|実像|虚像|全反射/},
+ {f:'phys',id:'oto',g:'main',name:'音',re:/音|振動数|振幅|Hz|オシロスコープ|弦/},
+ {f:'phys',id:'denryu',g:'main',name:'電流・電圧・抵抗',re:/電流|電圧|抵抗|Ω|直列|並列|電流計|電圧計|オーム/},
+ {f:'phys',id:'denryoku',g:'main',name:'電力・熱',re:/伝導|対流|放射|電力|W|熱量|J|電力量|発熱/},
+ {f:'phys',id:'jiba',g:'main',name:'磁界・電磁誘導・静電気',re:/磁界|帯電|電気（電子）|磁石|電磁誘導|誘導電流|コイル|フレミング|静電気|陰極線|電子線|真空放電/},
+ {f:'phys',id:'chikara',g:'main',name:'力・圧力・浮力',re:/力|ばね|フックの法則|圧力|Pa|浮力|水圧|重力|垂直抗力|分力|合力/},
+ {f:'phys',id:'undo',g:'main',name:'運動・仕事・エネルギー',re:/速さ|cm\/s|打点|テープ|等速直線|記録タイマー|斜面|仕事|仕事率|位置エネルギー|運動エネルギー|力学的エネルギー|慣性|作用・反作用/},
 ];
 const GUIDE={
 kansatsu:{k:['<b>顕微鏡</b>は「低倍率で見つけて → 中央に動かして → 高倍率へ」の順。','倍率＝<b>接眼レンズの倍率×対物レンズの倍率</b>','高倍率にすると、見える範囲は<b>せまく</b>なり、視野は<b>暗く</b>なる。','<b>プレパラート</b>：スライドガラスに試料をのせ、カバーガラスをかぶせたもの。'],
@@ -474,17 +476,39 @@ undo:{k:['<b>速さ＝移動距離 ÷ 時間</b>。平均の速さと瞬間の�
  t:['記録タイマー：1秒に50（または60）打点。5（6）打点＝<b>0.1秒</b>。テープの長さ÷0.1秒＝速さ。','<b>力学的エネルギー＝位置エネルギー＋運動エネルギー</b>。摩擦がなければ<b>一定</b>。','<b>仕事の原理</b>：道具を使っても仕事の大きさは変わらない（力は小さくなるが距離が長くなる）。','高さが高いほど・質量が大きいほど、位置エネルギーは大きい。'],
  m:['gはNに、cmはmに直してから計算。','<i>斜面の角度を大きくすると、速さのふえ方が大きくなる</i>']},
 };
-/* ===== テーマ別対策：全単元の設問を、解説の中身（キーワード）でテーマに振り分ける ===== */
+const PW=1236,PH=1749;
+/* ===== テーマ別対策：設問ごとに、解説のキーワードの点数がいちばん高いテーマにだけ入れる ===== */
 const stripTags=s=>String(s).replace(/<[^>]+>/g,'');
-function themeItems(t){
-  const out=[];
-  for(const s of SUBJECTS){ if(s.key!==t.f) continue;
-    for(let n=1;n<=s.n;n++){ const id=`${s.key}-${n}`,u=UNITS[id]; if(!u) continue;
-      u.pages.forEach((pg,pi)=>(pg.qs||[]).forEach((q,qi)=>{ if(q[5]) return;
-        if(t.re.test(stripTags(q[3]+' '+q[4]))) out.push({id,n,s,pi,qi,pg,q}); })); } }
+const gre=t=>t._g||(t._g=new RegExp(t.re.source,'g'));
+function tscore(t,ans,exp){
+  const bold=(String(exp).match(/<b>.*?<\/b>/g)||[]).join(' ');
+  const c=s=>{const m=stripTags(s).match(gre(t));return m?new Set(m).size:0};
+  return c(ans)*3+c(bold)*2+c(exp);
+}
+function classify(q,f){
+  const out=new Set(),ts=THEMES.filter(t=>t.f===f),groups={};
+  for(const t of ts){
+    if(t.g==='S'){ if(t.re.test(stripTags(q[4]))||t.re.test(stripTags(q[3]))) out.add(t.id); continue; }
+    (groups[t.g]=groups[t.g]||[]).push([t.id,tscore(t,q[3],q[4])]);
+  }
+  for(const [g,arr] of Object.entries(groups)){
+    const best=Math.max(...arr.map(a=>a[1]));
+    if(best<(g==='top2'?3:1)) continue;
+    arr.forEach(([id,sc])=>{ if(sc===best) out.add(id); });
+  }
   return out;
 }
+const ALLQ=[];
+for(const s of SUBJECTS) for(let n=1;n<=s.n;n++){ const id=`${s.key}-${n}`,u=UNITS[id]; if(!u) continue;
+  u.pages.forEach((pg,pi)=>(pg.qs||[]).forEach((q,qi)=>{ if(q[5]) return; ALLQ.push({id,n,s,pi,qi,pg,q,th:classify(q,s.key)}); })); }
+const themeItems=t=>ALLQ.filter(it=>it.th.has(t.id));
 const THEME_COUNT={}; THEMES.forEach(t=>THEME_COUNT[t.id]=themeItems(t).length);
+function cropHTML(it){
+  const y=it.q[2], nexts=it.pg.qs.map(x=>x[2]).filter(v=>v>y+15).sort((a,b)=>a-b);
+  const y0=Math.max(0,y-24), y1=Math.min(PH-20, nexts.length?nexts[0]-22:y+420), h=Math.max(60,Math.min(y1-y0,nexts.length?700:420));
+  const X0=0.06,XW=0.9; // 左右の余白を切って少し大きく見せる
+  return `<div class="crop" style="padding-top:${(h/(PW*XW)*100).toFixed(2)}%"><img src="${it.pg.img}" alt="" loading="lazy" style="width:${(100/XW).toFixed(3)}%;left:-${(X0/XW*100).toFixed(3)}%;transform:translateY(-${(y0/PH*100).toFixed(3)}%)"></div>`;
+}
 
 function renderThemes(){
   app.innerHTML=`
@@ -512,14 +536,15 @@ function renderTheme(tid){
     <h4>まずおさえること</h4><ul>${GUIDE[tid].k.map(x=>`<li>${x}</li>`).join('')}</ul>
     <h4 class="t2">よく出る問われ方と解き方</h4><ul>${GUIDE[tid].t.map(x=>`<li>${x}</li>`).join('')}</ul>
     <h4 class="t3">まちがえやすいところ</h4><ul>${GUIDE[tid].m.map(x=>`<li>${x}</li>`).join('')}</ul></section>`:''}
-  <p class="mode">ポイントを読んだら、下の問題で練習しよう。「問題を解く」で問題ページのその設問へ。解いたら「答えと解説」で確認しよう。</p>
+  <p class="mode">ポイントを読んだら、下の問題で練習しよう。問題文を読んで解いたら「答えと解説」で確認しよう。図や資料が見たいときは「ページ全体で見る」へ。</p>
   <ol class="tlist" style="--c:var(${s.color})">${items.map((it,i)=>{
     const head=it.id!==lastU?`<li class="tu"><b>${s.name}の ${CIRC[it.n-1]}</b><small>${(UNIT_LABELS[it.id]||'').replace('/','・')}</small></li>`:'';
     lastU=it.id;
     return head+`<li class="ti">
       <div class="trow"><span class="tq">${it.pg.label}　${it.q[0]}${it.q[6]?' <span class="hard">ムズ</span>':''}</span>
-        <a class="tgo" href="#${it.id}@${it.pi}@${it.qi}">問題を解く ▶</a>
+        <a class="tgo" href="#${it.id}@${it.pi}@${it.qi}">ページ全体で見る ▶</a>
         <button class="tans" data-i="${i}" aria-expanded="false">答えと解説</button></div>
+      ${cropHTML(it)}
       <div class="tbody" id="tb${i}" hidden><p class="a">こたえ：${it.q[3]}</p><p class="exp">${it.q[4]}</p></div></li>`}).join('')}
   </ol>`;
   document.getElementById('back').onclick=()=>{location.hash='themes'};
