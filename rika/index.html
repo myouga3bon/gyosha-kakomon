@@ -156,6 +156,40 @@ body::before{background:var(--bg)}
 .ans{background:var(--surface);border:2px solid var(--line)}
 .ans li b{color:var(--fg)}
 :root{--bio:var(--leaf-green);--geo:var(--leaf-orange);--chem:var(--leaf-lav);--phys:var(--leaf-blue)}
+/* ---------- テーマ別対策 ---------- */
+.themebtn{display:grid;grid-template-columns:1fr auto;column-gap:12px;row-gap:2px;align-items:center;background:var(--leaf-yellow);border:2.5px solid var(--brown);border-radius:18px;padding:14px 18px;color:var(--fg);text-decoration:none;box-shadow:0 3px 0 var(--brown)}
+.themebtn b{font-family:var(--display);font-weight:900;font-size:22px}
+.themebtn span{font-size:13px;color:var(--muted)}
+.themebtn i{grid-column:2;grid-row:1/3;font-style:normal;font-family:var(--display);font-weight:900;font-size:20px}
+.themebtn:hover{filter:brightness(1.03);transform:translateY(-1px)}
+.themes{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.theme{display:flex;align-items:center;justify-content:space-between;gap:6px;text-align:left;border:2px solid var(--brown);border-radius:12px;background:var(--c);color:var(--fg);padding:8px 10px;font-family:var(--display);font-weight:700;font-size:14px;line-height:1.3}
+.theme:hover{filter:brightness(1.03);transform:translateY(-1px)}
+.theme .tc{flex:none;font-family:var(--body);font-size:11px;background:var(--surface);border:1.5px solid var(--brown);border-radius:999px;padding:0 7px}
+.tlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.tu{display:flex;align-items:baseline;gap:8px;margin-top:10px;padding:4px 12px;border-radius:999px;background:var(--c);border:2px solid var(--brown);align-self:flex-start}
+.tu b{font-family:var(--display);font-size:16px}
+.tu small{font-size:12px;color:var(--fg)}
+.ti{background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:10px 12px}
+.trow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tq{font-weight:700;flex:1 1 auto}
+.tq .hard{font-size:11px;background:#1e9a4a;color:#fff;border-radius:6px;padding:0 5px}
+.tgo,.tans{border:2px solid var(--brown);border-radius:999px;padding:4px 12px;font-family:var(--display);font-weight:700;font-size:13px;color:var(--fg);text-decoration:none;background:var(--leaf-yellow)}
+.tans{background:#f08f7a;color:#fff}
+.tans[aria-expanded="true"]{background:var(--surface);color:var(--fg)}
+.tbody{margin-top:8px;display:flex;flex-direction:column;gap:6px}
+.tbody .a{font-weight:700;margin:0}
+.qmark{position:absolute;left:0;transform:translateY(-50%);z-index:3;background:#f08f7a;color:#fff;border:2px solid #fff;border-radius:999px;padding:.15em .6em;font-weight:700;font-size:clamp(11px,1.9cqw,16px);box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.guide{background:var(--surface);border:2.5px solid var(--brown);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:6px}
+.guide>h3{font-size:19px;display:flex;align-items:center;gap:8px}
+.guide>h3::before{content:"";width:14px;height:20px;border-radius:50%/60% 60% 40% 40%;background:var(--c);border:2px solid var(--brown);transform:rotate(-20deg)}
+.guide h4{margin:8px 0 2px;font-family:var(--display);font-size:15px;display:inline-block;align-self:flex-start;background:var(--c);border-radius:999px;padding:1px 12px}
+.guide h4.t2{background:var(--leaf-yellow)}
+.guide h4.t3{background:#fbd5cf}
+.guide ul{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:5px;font-size:15px;line-height:1.75}
+.guide b{color:var(--red)}
+.guide i{font-style:normal;font-weight:700;color:var(--pt);border-bottom:2px solid var(--pt)}
+.guide details summary{cursor:pointer;font-weight:700;color:var(--muted);font-size:13px}
 </style>
 
 <div class="wrap" id="app"></div>
@@ -308,6 +342,191 @@ for(const [key,u] of Object.entries(window.UNIT_DATA||{})){
 }
 
 const app=document.getElementById('app');
+const THEMES=[
+ {f:'bio',id:'kansatsu',name:'観察・実験器具',re:/顕微鏡|プレパラート|レボルバー|ルーペ|双眼実体|視野|対物レンズ|接眼レンズ|ピント/},
+ {f:'bio',id:'shokubutsu',name:'植物のつくり・花',re:/花弁|おしべ|めしべ|がく|子房|胚珠|柱頭|裸子|被子|双子葉|単子葉|維管束|道管|師管|根毛|ひげ根|主根|葉脈|シダ|コケ|胞子/},
+ {f:'bio',id:'kogosei',name:'光合成・呼吸',re:/光合成|葉緑体|デンプン|ヨウ素|対照実験|石灰水|BTB|呼吸/},
+ {f:'bio',id:'jousan',name:'蒸散（蒸散量の計算）',re:/蒸散|気孔|ワセリン|水面から/},
+ {f:'bio',id:'shoka',name:'消化・吸収',re:/消化|だ液|アミラーゼ|ペプシン|胆汁|すい液|柔毛|ブドウ糖|アミノ酸|脂肪酸|ベネジクト/},
+ {f:'bio',id:'junkan',name:'血液循環・排出',re:/心臓|心房|心室|動脈|静脈|血液|赤血球|白血球|血小板|血しょう|ヘモグロビン|組織液|肺胞|じん臓|肝臓|尿/},
+ {f:'bio',id:'shinkei',name:'感覚器官・神経',re:/神経|せきずい|反射|反応|網膜|鼓膜|感覚器官|筋肉|けん|関節|骨格/},
+ {f:'bio',id:'bunrui',name:'動物の分類・進化',re:/セキツイ|ハチュウ|両生類|魚類|鳥類|ほにゅう|恒温|変温|胎生|卵生|節足|軟体|外とう膜|相同器官|進化/},
+ {f:'bio',id:'iden',name:'生殖・遺伝・細胞分裂',re:/遺伝|Aa|細胞分裂|成長点|根の先|塩酸であたため|AA|aa|純系|優性|顕性|潜性|分離の法則|減数分裂|体細胞分裂|染色体|受精|生殖|発生|精細胞|卵細胞|花粉管/},
+ {f:'bio',id:'seitai',name:'食物連鎖・微生物',re:/食物連鎖|生産者|消費者|分解者|微生物|菌類|細菌|カビ|乳酸菌|ミミズ|トビムシ/},
+ {f:'geo',id:'kasei',name:'火山・火成岩・鉱物',re:/火成岩|深成岩|火山岩|斑状|等粒状|斑晶|石基|鉱物|マグマ|花こう岩|安山岩|玄武岩|流紋岩|せん緑岩|はんれい岩|火山/},
+ {f:'geo',id:'chiso',name:'地層・化石',re:/地層|化石|示相|示準|凝灰岩|れき岩|砂岩|泥岩|石灰岩|チャート|堆積|しゅう曲|断層|風化|侵食|柱状図|かぎ層|れき|泥|粒/},
+ {f:'geo',id:'jishin',name:'地震（計算・グラフ）',re:/地震|震源|震央|初期微動|主要動|P波|S波|震度|マグニチュード|km\/s|プレート/},
+ {f:'geo',id:'tenki',name:'天気・前線・気団',re:/前線|気団|低気圧|高気圧|季節風|天気図|風向|風力|等圧線|積乱雲|乱層雲|偏西風|西高東低|移動性/},
+ {f:'geo',id:'shitsudo',name:'湿度・露点・雲のでき方',re:/湿度|露点|飽和水蒸気量|乾球|湿球|雲のでき|膨張|気圧が下が/},
+ {f:'geo',id:'taiyo',name:'太陽の動き・季節',re:/南中|太陽の動き|日の出|日の入り|影|サインペン|日周運動|透明半球|夏至|冬至|春分|秋分|昼の長さ|地軸|23\.4/},
+ {f:'geo',id:'hoshi',name:'星・月・惑星',re:/星座|星|オリオン|さそり|おうし|年周運動|公転|月|金星|惑星|衛星|満月|新月|明けの|よいの|内惑星|1日に約1°/},
+ {f:'chem',id:'suiyoeki',name:'水溶液・濃度・溶解度',re:/濃度|溶解度|溶質|溶媒|溶液|再結晶|飽和|結晶|とける量/},
+ {f:'chem',id:'jotai',name:'状態変化・蒸留・実験器具',re:/融点|沸点|蒸留|状態変化|メスシリンダー|ガスバーナー|混合物|純粋な物質|体積/},
+ {f:'chem',id:'kitai',name:'気体・物質の区別',re:/酸素|二酸化炭素|水素|アンモニア|窒素|塩素|上方置換|下方置換|水上置換|密度|有機物|無機物|砂糖|食塩|デンプン/},
+ {f:'chem',id:'bunkai',name:'分解（熱分解・電気分解）',re:/分解|炭酸水素ナトリウム|酸化銀|塩化コバルト|フェノールフタレイン/},
+ {f:'chem',id:'sanka',name:'酸化・還元・化学変化と熱',re:/発熱|吸熱|酸化|還元|燃焼|酸化銅|酸化マグネシウム|スチールウール|硫化/},
+ {f:'chem',id:'shitsuryo',name:'質量の変化（比の計算）',re:/質量保存|：\d|\d：\d|質量比|ふえなくなる|\d\.\dg/},
+ {f:'chem',id:'ion',name:'イオン・電気分解・電池',re:/イオン|電離|電解質|陽極|陰極|電子|電池|Cu²⁺|Zn²⁺|Cl⁻|Na⁺|H⁺|OH⁻/},
+ {f:'chem',id:'chuwa',name:'酸・アルカリ・中和',re:/中和|酸性|アルカリ性|中性|BTB|pH|塩酸|水酸化ナトリウム|硫酸バリウム/},
+ {f:'phys',id:'hikari',name:'光・凸レンズ',re:/光|像|レンズ|反射|屈折|凸レンズ|焦点|実像|虚像|全反射/},
+ {f:'phys',id:'oto',name:'音',re:/音|振動数|振幅|Hz|オシロスコープ|弦/},
+ {f:'phys',id:'denryu',name:'電流・電圧・抵抗',re:/電流|電圧|抵抗|Ω|直列|並列|電流計|電圧計|オーム/},
+ {f:'phys',id:'denryoku',name:'電力・熱',re:/伝導|対流|放射|電力|W|熱量|J|電力量|発熱/},
+ {f:'phys',id:'jiba',name:'磁界・電磁誘導・静電気',re:/磁界|帯電|電気（電子）|磁石|電磁誘導|誘導電流|コイル|フレミング|静電気|陰極線|電子線|真空放電/},
+ {f:'phys',id:'chikara',name:'力・圧力・浮力',re:/力|ばね|フックの法則|圧力|Pa|浮力|水圧|重力|垂直抗力|分力|合力/},
+ {f:'phys',id:'undo',name:'運動・仕事・エネルギー',re:/速さ|cm\/s|打点|テープ|等速直線|記録タイマー|斜面|仕事|仕事率|位置エネルギー|運動エネルギー|力学的エネルギー|慣性|作用・反作用/},
+];
+const GUIDE={
+kansatsu:{k:['<b>顕微鏡</b>は「低倍率で見つけて → 中央に動かして → 高倍率へ」の順。','倍率＝<b>接眼レンズの倍率×対物レンズの倍率</b>','高倍率にすると、見える範囲は<b>せまく</b>なり、視野は<b>暗く</b>なる。','<b>プレパラート</b>：スライドガラスに試料をのせ、カバーガラスをかぶせたもの。'],
+ t:['ピント合わせは、横から見ながら対物レンズとプレパラートを<b>近づけ</b>、のぞきながら<b>遠ざけて</b>合わせる（ぶつけないため）。','視野の右上にあるものを中央へ動かすときは、プレパラートを<b>右上</b>へ動かす（像は上下左右が逆）。','双眼実体顕微鏡：まず右目で調節ねじ、次に左目で視度調節リング。'],
+ m:['レンズは<b>接眼レンズ→対物レンズ</b>の順につける（ほこりが入らないように）。','カバーガラスは、空気の泡が入らないように<b>はしから静かに</b>おろす。']},
+shokubutsu:{k:['花のつくり（外側から）：<b>がく → 花弁 → おしべ → めしべ</b>','受粉後、<b>子房 → 果実</b>、<b>胚珠 → 種子</b>になる。','裸子植物（マツなど）は子房がなく、胚珠がむき出し。','<b>道管</b>＝根から吸った水や養分の通り道、<b>師管</b>＝葉でできた栄養分の通り道。両方の束＝<b>維管束</b>。'],
+ t:['茎の断面：双子葉類は維管束が<b>輪の形</b>、単子葉類は<b>散らばる</b>。','道管の位置：茎では<b>内側</b>、葉では<b>表側（上）</b>。','分類の問題は「種子をつくる？ → 子房がある？ → 子葉は1枚か2枚か」の順に考える。'],
+ m:['<i>茎は「うち」、葉は「うえ」が道管</i>','シダ植物・コケ植物は<b>胞子</b>でふえる。コケには維管束がない。']},
+kogosei:{k:['<b>光合成</b>：葉緑体で、光を受けて 水＋二酸化炭素 → <b>デンプン＋酸素</b>','<b>呼吸</b>：酸素を使って栄養分を分解し、エネルギーをとり出す。二酸化炭素を出す。','植物は昼も夜も呼吸している。昼は光合成のほうがさかん。'],
+ t:['ヨウ素液が<b>青むらさき色</b>になる → デンプンがある。','葉をあたためた<b>エタノール</b>につける → 葉の緑色をぬいて、色の変化を見やすくする。','<b>対照実験</b>：調べたい条件を<b>1つだけ</b>変え、他の条件はそろえる。どの2つを比べるかを必ず考える。','BTB溶液：二酸化炭素が減る→<b>青</b>、ふえる→<b>黄</b>。'],
+ m:['「光が必要」を調べるならアルミはくで光だけ変えた部分と比べる。「葉緑体が必要」なら<b>ふ（白い部分）</b>と比べる。','実験の前に一晩暗い所に置くのは、葉の<b>デンプンをなくす</b>ため。']},
+jousan:{k:['<b>蒸散</b>：植物の体から水が<b>水蒸気</b>になって出ていくこと。','おもに葉の<b>気孔</b>から出る。気孔はふつう<b>葉の裏側</b>に多い。','蒸散がさかんになると、根からの<b>水の吸い上げ</b>もさかんになる。'],
+ t:['ワセリンをぬった所からは水が出ない。表・裏・茎のどこから出たかを<b>式で表す</b>。','例）A（何もぬらない）＝表＋裏＋茎、B（表にぬる）＝裏＋茎、C（裏にぬる）＝表＋茎<br>→ <b>A−B＝表</b>、<b>A−C＝裏</b>、<b>B＋C−A＝茎</b>','水面に<b>油</b>をうかべるのは、水面からの蒸発を防ぐため。'],
+ m:['「表にワセリン」＝表からは出ない、という意味。ぬった所と出る所を逆にしない！','<i>まず表・裏・茎の3つに分けて式を書くのがコツ</i>']},
+shoka:{k:['デンプン → <b>ブドウ糖</b>、タンパク質 → <b>アミノ酸</b>、脂肪 → <b>脂肪酸とモノグリセリド</b>','だ液（<b>アミラーゼ</b>）＝デンプン、胃液（<b>ペプシン</b>）＝タンパク質、すい液＝3つすべて、胆汁＝脂肪の分解を<b>助ける</b>（消化酵素はない）。','小腸の<b>柔毛</b>で吸収。ブドウ糖・アミノ酸は<b>毛細血管</b>、脂肪は<b>リンパ管</b>へ。'],
+ t:['ヨウ素液：デンプンがあると青むらさき。<b>ベネジクト液</b>：糖があると加熱して<b>赤かっ色</b>の沈殿。','だ液の実験は体温に近い<b>約40℃</b>で行う。水だけの試験管と比べる（対照実験）。','高温で消化酵素ははたらかなくなる。'],
+ m:['胆汁は<b>肝臓</b>でつくられ、胆のうにためられる。','柔毛があると<b>表面積が大きく</b>なり、効率よく吸収できる。']},
+junkan:{k:['心臓：<b>右心房 → 右心室 → 肺動脈 → 肺 → 肺静脈 → 左心房 → 左心室 → 大動脈 → 全身</b>','<b>動脈</b>＝心臓から出る血管、<b>静脈</b>＝心臓にもどる血管（逆流を防ぐ弁がある）。','<b>赤血球</b>（ヘモグロビン）＝酸素を運ぶ、<b>白血球</b>＝細菌を分解、<b>血小板</b>＝出血を止める、<b>血しょう</b>＝養分や不要物を運ぶ。'],
+ t:['酸素を多くふくむ血液＝<b>動脈血</b>。肺静脈・大動脈を流れる。','図は自分と向かい合った形 → <b>左右が逆</b>。','<b>肝臓</b>：有害なアンモニアを<b>尿素</b>に変える。<b>じん臓</b>：尿素などをこし出して<b>尿</b>をつくる。'],
+ m:['「肺動脈には静脈血」「肺静脈には動脈血」が流れる。名前と血液の種類がずれるので注意！','血しょうが毛細血管からしみ出たもの＝<b>組織液</b>。']},
+shinkei:{k:['感覚器官：目・耳・鼻・舌・皮ふ。刺激 → <b>感覚神経</b> → 脳やせきずい → <b>運動神経</b> → 筋肉','<b>反射</b>：脳を通らず、<b>せきずい</b>などから命令が出る。反応が速い。','目：<b>網膜</b>で光を受けとる。<b>虹彩</b>で光の量を調節。'],
+ t:['反応時間の計算：全体の時間 ÷ 人数（または回数）で<b>1人あたり</b>を出す。','「意識して起こす反応」と「反射」を区別する。熱い物にさわって手を引っこめる＝反射。','腕を曲げるときは<b>内側の筋肉が縮む</b>。筋肉は骨に<b>けん</b>でついている。'],
+ m:['平均を出すとき、何回分・何人分の時間かを必ず確かめる。','<i>反射は「脳を通らない」から速い</i>']},
+bunrui:{k:['セキツイ動物：<b>魚類・両生類・ハチュウ類・鳥類・ほにゅう類</b>','呼吸：魚類＝えら、両生類＝子はえら・親は肺と皮ふ、それ以外＝肺。','体温：鳥類・ほにゅう類＝<b>恒温動物</b>、それ以外＝変温動物。','子のうまれ方：ほにゅう類＝<b>胎生</b>、それ以外＝卵生。'],
+ t:['表で分類するときは「えら？ 肺？」「胎生？」「体表は？（うろこ・羽毛・毛）」で絞りこむ。','無セキツイ動物：<b>節足動物</b>（外骨格・節がある：昆虫・甲殻類・クモ）、<b>軟体動物</b>（外とう膜：イカ・貝）。','<b>相同器官</b>：もとは同じ器官（ヒトのうで・クジラのひれ・鳥のつばさ）→ <b>進化</b>の証拠。'],
+ m:['クモは昆虫ではない（あしが8本）。','ハチュウ類の卵は<b>殻がある</b>ので陸上で生活できる。両生類の卵は殻がなく水中。']},
+iden:{k:['<b>体細胞分裂</b>：染色体の数は変わらない。根の先端近く（成長点）でさかん。','<b>減数分裂</b>：生殖細胞をつくる。染色体の数が<b>半分</b>になる。','<b>有性生殖</b>：受精でふえる。子は両親の遺伝子を半分ずつ受けつぐ。<b>無性生殖</b>：親と<b>まったく同じ遺伝子</b>。'],
+ t:['かけ合わせは<b>表を書く</b>。Aa×Aa → AA：Aa：aa＝1：2：1 → 顕性：潜性＝<b>3：1</b>','Aa×aa → Aa：aa＝1：1。AA×aa → すべてAa。','体細胞分裂の順：核の中に染色体 → <b>中央に並ぶ</b> → <b>両はしに分かれる</b> → 2つの細胞。','うすい塩酸であたためる → 細胞どうしが<b>離れやすく</b>なる。'],
+ m:['<i>「3：1」を見たら Aa×Aa</i>','受粉→花粉管がのびる→<b>精細胞</b>と<b>卵細胞</b>が受精→受精卵→胚。']},
+seitai:{k:['<b>生産者</b>＝植物（光合成で有機物をつくる）、<b>消費者</b>＝動物、<b>分解者</b>＝菌類・細菌類（有機物を無機物に分解）。','食物連鎖の数量：植物 ＞ 草食動物 ＞ 肉食動物（ピラミッド形）。','分解者も呼吸して<b>二酸化炭素</b>を出す。'],
+ t:['草食動物がふえると → 植物が減り、肉食動物がふえる → やがて草食動物が減る → もとにもどる、の順。','微生物の実験：土を<b>焼いた</b>もの（微生物が死ぬ）と比べる対照実験。','デンプンが分解されると、ヨウ素液の色が<b>変化しなくなる</b>。'],
+ m:['ミミズ・ダンゴムシなどの土の中の小動物も分解者のなかま。','炭素は 二酸化炭素 →（光合成）→ 有機物 →（呼吸・分解）→ 二酸化炭素 と循環する。']},
+kasei:{k:['<b>深成岩</b>：地下深くで<b>ゆっくり</b>冷える → <b>等粒状組織</b>（花こう岩・せん緑岩・はんれい岩）','<b>火山岩</b>：地表近くで<b>急に</b>冷える → <b>斑状組織</b>（斑晶＋石基）（流紋岩・安山岩・玄武岩）','白っぽい岩石は<b>無色鉱物</b>（石英・長石）が多い。黒っぽいのは有色鉱物が多い。'],
+ t:['マグマのねばりけが<b>強い</b> → 白っぽい・おだやかでない噴火・ドーム状。<b>弱い</b> → 黒っぽい・溶岩が流れる・たて状。','火山灰は<b>蒸発皿</b>で水を加え、指でおし洗いして観察。','組織の図：粒の大きさがそろう＝等粒状、大きな粒と細かい部分＝斑状。'],
+ m:['<i>深成岩は「しんかはせんはん」、火山岩は「りゅうあんげん」</i>','「斑晶」＝大きな結晶、「石基」＝細かい粒やガラス質の部分。']},
+chiso:{k:['粒の大きさ：<b>れき（2mm以上）＞ 砂 ＞ 泥</b>。大きい粒ほど速くしずみ、<b>岸の近く</b>にたまる。','<b>示相化石</b>＝当時の環境（サンゴ＝あたたかく浅い海）、<b>示準化石</b>＝時代（サンヨウチュウ＝古生代、アンモナイト＝中生代）。','<b>凝灰岩</b>＝火山灰が固まった岩石 → その時代に火山の噴火があった。','石灰岩＝塩酸で<b>二酸化炭素</b>が出る、チャート＝とても硬い。'],
+ t:['柱状図の比較：<b>かぎ層</b>（凝灰岩など）の<b>標高</b>をそろえて考える。標高＝地表の標高−深さ。','下から上へ、れき→砂→泥と粒が小さくなる → 海が<b>深くなった</b>（海岸から遠くなった）。','断層・しゅう曲：大きな力がはたらいたあと。'],
+ m:['地層はふつう<b>下ほど古い</b>。','風化＝岩石がもろくなる、侵食＝けずる、運搬＝運ぶ、堆積＝積もる。']},
+jishin:{k:['<b>P波</b>（速い・初期微動）→ <b>S波</b>（おそい・主要動）','<b>初期微動継続時間</b>（P波とS波の到着の差）は、震源からの距離に<b>比例</b>する。','<b>震度</b>＝ゆれの大きさ（0〜7の10階級）、<b>マグニチュード</b>＝地震の規模。'],
+ t:['速さ＝距離÷時間。2地点の距離の差 ÷ 到着時刻の差 で求める。','発生時刻＝到着時刻 −（距離÷速さ）。','日本付近の地震：<b>海のプレート</b>が陸のプレートの下に<b>しずみこむ</b> → 陸のプレートがはね上がる。','震源の深さ：太平洋側で浅く、日本海側（大陸側）へ行くほど<b>深く</b>なる。'],
+ m:['グラフは「横軸が時刻、縦軸が距離」が多い。直線の傾きが速さ。','緊急地震速報はP波を感知して、S波が届く前に知らせるしくみ。']},
+tenki:{k:['<b>寒冷前線</b>：寒気が暖気をおし上げる。<b>積乱雲</b>・せまい範囲に<b>強い雨</b>・短時間。通過後、気温が<b>急に下がり</b>、風が<b>北より</b>に変わる。','<b>温暖前線</b>：暖気が寒気の上にはい上がる。<b>乱層雲</b>・広い範囲に<b>弱い雨</b>・長時間。通過後、気温が上がる。','日本の天気は<b>偏西風</b>で<b>西から東</b>へ変わる。'],
+ t:['気団：冬＝<b>シベリア気団</b>（西高東低・北西の季節風）、夏＝<b>小笠原気団</b>（南高北低）、つゆ・夏のはじめ＝<b>オホーツク海気団</b>との間に停滞前線。','春・秋：<b>移動性高気圧</b>と低気圧が交互に来る → 天気が周期的に変わる。','風向は「ふいてくる方向」。天気記号の矢の向きに注意。'],
+ m:['寒冷前線は温暖前線より速く進み、追いつくと<b>閉そく前線</b>になる。','高気圧＝下降気流で晴れ、低気圧＝上昇気流で雲ができやすい。']},
+shitsudo:{k:['<b>湿度（％）＝空気中の水蒸気量 ÷ その気温の飽和水蒸気量 ×100</b>','<b>露点</b>：水蒸気が水滴になり始める温度。露点の飽和水蒸気量＝実際の水蒸気量。','雲のでき方：空気が上昇 → 気圧が下がり<b>膨張</b> → 温度が下がる → 露点に達して水滴に。'],
+ t:['乾湿計：乾球と湿球の<b>差</b>を出し、湿度表で乾球の温度の行と差の列が交わる所を読む。','出てくる水の量＝実際の水蒸気量 − 下がった温度の飽和水蒸気量（1m³あたり×体積）。','コップの実験：くもり始めた水温＝露点。'],
+ m:['湿度の計算は「÷飽和水蒸気量」。実際の量どうしで割らない。','気温が上がると、水蒸気量が同じでも湿度は<b>下がる</b>。']},
+taiyo:{k:['太陽は<b>東から出て南を通り西へ</b>しずむ（地球の<b>自転</b>による日周運動）。','太陽が真南に来る＝<b>南中</b>。南中高度は夏至に高く、冬至に低い。','季節の変化の原因：地軸が<b>23.4°</b>かたむいたまま<b>公転</b>しているから。'],
+ t:['透明半球：ペン先の影が<b>中心O</b>にくるように印をつける。','1時間に動く長さが一定 → 日の出・日の入りの時刻は<b>比例</b>で求める（例：1時間＝2cm）。','南中高度：夏至＝90°−緯度＋23.4°、冬至＝90°−緯度−23.4°、春分・秋分＝90°−緯度。','昼の長さ＝日の出から日の入りまでの長さ ÷ 1時間あたりの長さ。'],
+ m:['東へ行くほど南中時刻は<b>早い</b>（経度1°で4分）。','夏至は日の出が<b>北より</b>、冬至は<b>南より</b>。']},
+hoshi:{k:['星の日周運動：<b>1時間に15°</b>、東から西へ。北の空は北極星を中心に<b>反時計回り</b>。','年周運動：同じ時刻に見ると<b>1日に約1°</b>（1か月に30°）西へ動く。','月：太陽の光を反射。満ち欠けは約29.5日。金星：<b>内惑星</b>なので、明け方の東か夕方の西にしか見えない。'],
+ t:['「30日後の同じ時刻」＝30°西 ＝ 2時間ぶん。同じ位置に見えるのは<b>2時間早い</b>時刻。','月の形：太陽−地球−月の位置関係の図で、光の当たる側を考える。夕方南に見えるのは<b>上弦の月</b>。','金星は地球に近いほど<b>大きく欠けて</b>見える。'],
+ m:['太陽と同じ方向にある星座は、昼に空にあるので<b>見えない</b>。','月食＝太陽−地球−月（満月のとき）、日食＝太陽−月−地球（新月のとき）。']},
+suiyoeki:{k:['<b>質量パーセント濃度（％）＝溶質の質量 ÷ 溶液の質量 ×100</b>（溶液＝溶質＋溶媒）','<b>溶解度</b>：100gの水にとける最大の量。温度で変わる。','とけきれなくなった状態＝<b>飽和</b>。冷やしたり水を蒸発させたりして結晶をとり出す＝<b>再結晶</b>。'],
+ t:['出てくる結晶の量＝はじめにとけていた量 −（冷やした温度でとける量）。','食塩（塩化ナトリウム）は温度でとける量がほとんど変わらない → 冷やしても結晶が出にくい → 水を<b>蒸発</b>させる。','溶液をつくる計算：溶質＝溶液×濃度÷100、水＝溶液−溶質。'],
+ m:['濃度の式で「水の質量」で割らない。<b>溶液（全体）</b>で割る！','水溶液の濃さはどこでも同じ（時間がたっても下にたまらない）。']},
+jotai:{k:['<b>融点</b>（とける温度）・<b>沸点</b>（ふっとうする温度）は物質ごとに決まっている。','純粋な物質はグラフに<b>平らな部分</b>ができる。混合物はできにくい。','<b>蒸留</b>：沸点のちがいを利用して液体を分ける（水100℃、エタノール約78℃）。'],
+ t:['エタノールと水の混合物を加熱 → はじめに出てくる液体に<b>エタノール</b>が多い（火がつく・においがある）。','状態変化では体積は変わるが、<b>質量は変わらない</b>。','メスシリンダーは、液面の<b>いちばん低い所</b>を<b>真横</b>から読む。'],
+ m:['ガスバーナー：火をつけるときはガス調節ねじ → 空気調節ねじの順。炎は<b>青色</b>に。','沸騰石を入れるのは、急に沸騰するのを防ぐため。']},
+kitai:{k:['<b>酸素</b>：ものを燃やす。<b>二酸化炭素</b>：石灰水を白くにごらせる・水溶液は酸性。<b>水素</b>：燃える（ポンと音）・いちばん軽い。','<b>アンモニア</b>：刺激臭・水に非常にとけやすい・水溶液はアルカリ性 → <b>上方置換</b>。','有機物（炭素をふくむ）を燃やすと二酸化炭素と水ができる。'],
+ t:['集め方：水にとけにくい＝<b>水上置換</b>、とけやすく空気より軽い＝上方置換、重い＝<b>下方置換</b>。','物質の区別：「燃やすとこげる？」→有機物、「水にとける？」「電流が流れる？」で見分ける。','密度＝質量÷体積。'],
+ m:['アンモニアの噴水実験：水にとけてフラスコ内の<b>圧力が下がる</b>ため水がふき上がる。','食塩・砂糖・デンプン：加熱してこげるのは砂糖とデンプン（有機物）。']},
+bunkai:{k:['<b>分解</b>：1種類の物質が2種類以上に分かれる化学変化。','炭酸水素ナトリウム → <b>炭酸ナトリウム＋二酸化炭素＋水</b>','酸化銀 → <b>銀＋酸素</b>','水の電気分解：陰極に<b>水素</b>、陽極に<b>酸素</b>（体積比 2：1）。'],
+ t:['加熱するとき、試験管の口を<b>少し下げる</b>（できた水が加熱部分に流れて試験管が割れるのを防ぐ）。','火を消す前に、ガラス管を液から出す（石灰水の<b>逆流</b>を防ぐ）。','水の確認：<b>塩化コバルト紙</b>が青→<b>赤（桃）色</b>。','炭酸ナトリウムは水によくとけ、フェノールフタレインで<b>濃い赤</b>（強いアルカリ性）。'],
+ m:['単体＝1種類の元素（Ag、O₂）、化合物＝2種類以上（Ag₂O、H₂O）。','<i>口は下げる、ガラス管は先に出す</i>']},
+sanka:{k:['<b>酸化</b>：物質が酸素と結びつく。激しい酸化＝<b>燃焼</b>（熱や光を出す）。','<b>還元</b>：酸化物から酸素をうばう。還元と酸化は<b>同時</b>に起こる。','酸化銅＋炭素 → 銅＋二酸化炭素（炭素が酸化、酸化銅が還元）。','<b>発熱反応</b>（化学かいろ：鉄の酸化）、<b>吸熱反応</b>（塩化アンモニウム＋水酸化バリウム）。'],
+ t:['スチールウールを燃やすと酸素が結びつくので質量が<b>ふえる</b>。','鉄と硫黄 → 硫化鉄（加熱をやめても反応が続く＝発熱）。塩酸を加えると<b>硫化水素</b>（卵がくさったようなにおい）。','炭素は銅より酸素と<b>結びつきやすい</b> → 酸化銅から酸素をうばえる。'],
+ m:['還元は「酸素をうばわれる」側の変化。どちらが酸化されたかを図で確認する。','マグネシウムを燃やすと白い酸化マグネシウムになる。']},
+shitsuryo:{k:['<b>質量保存の法則</b>：化学変化の前後で全体の質量は変わらない。','結びつく物質の質量の比は一定：<b>銅：酸素＝4：1</b>、<b>マグネシウム：酸素＝3：2</b>。','ふたをしないと、発生した気体が空気中へ出ていき、質量は<b>減る</b>。'],
+ t:['結びついた酸素の質量＝加熱後の質量 − 加熱前の質量。','グラフが平らになる所＝それ以上酸素と結びつかない（反応が終わった）。','比の計算：表の数値から比を出し、「求める量：わかっている量＝比」で解く。','気体が出る実験（炭酸水素ナトリウム＋塩酸）：出ていった気体の質量＝反応前−反応後。'],
+ m:['「酸化銅の質量」と「酸素の質量」をとりちがえない。','<i>銅4：酸素1：酸化銅5</i>']},
+ion:{k:['<b>イオン</b>：原子が電子を失う→<b>陽イオン</b>（＋）、受けとる→<b>陰イオン</b>（−）。','<b>電解質</b>：水にとけると電離して電流が流れる（塩化ナトリウム・塩化銅など）。砂糖・エタノールは非電解質。','塩化銅の電気分解：陰極に<b>銅</b>（赤かっ色）、陽極に<b>塩素</b>（刺激臭・漂白作用）。'],
+ t:['電離の式：CuCl₂ → Cu²⁺ ＋ 2Cl⁻（＋と−の数をそろえる）。','電池：<b>2種類の金属</b>と<b>電解質の水溶液</b>が必要。とけやすい金属（亜鉛）が<b>−極</b>。','亜鉛板：Zn → Zn²⁺＋電子（とける）、銅板：水素イオンが電子を受けとり<b>水素</b>が出る。','塩化銅水溶液の<b>青色</b>は銅イオンの色 → 電気分解でうすくなる。'],
+ m:['電子は導線を<b>−極から＋極</b>へ、電流の向きはその逆。','陽イオンは陰極へ、陰イオンは陽極へ引きつけられる。']},
+chuwa:{k:['<b>酸性</b>：水素イオン H⁺、<b>アルカリ性</b>：水酸化物イオン OH⁻','<b>中和</b>：H⁺ ＋ OH⁻ → H₂O（水）。同時に<b>塩</b>ができる。','BTB溶液：酸性＝<b>黄</b>、中性＝<b>緑</b>、アルカリ性＝<b>青</b>。pH：7が中性、小さいほど酸性。'],
+ t:['塩酸＋水酸化ナトリウム → 塩化ナトリウム＋水。','イオンの数のグラフ：加えたイオンのうち、中和で使われるもの（H⁺やOH⁻）は<b>完全に中和するまで0</b>、使われないもの（Na⁺やCl⁻）は<b>ふえ続ける／変わらない</b>。','硫酸＋水酸化バリウム → <b>硫酸バリウム</b>（白い沈殿）＋水。沈殿の量は中和が終わるとふえなくなる。'],
+ m:['中性になる前でも、中和はすでに起こっている。','フェノールフタレイン：アルカリ性で<b>赤</b>。']},
+hikari:{k:['<b>反射</b>：入射角＝反射角。<b>屈折</b>：空気→水では境界面に<b>近づく</b>ように曲がる。','凸レンズ：<b>焦点</b>を通る光は平行に、中心を通る光は直進。','物体が焦点の外 → <b>実像</b>（上下左右が逆）。焦点の内側 → <b>虚像</b>（同じ向き・大きい）。'],
+ t:['作図：①光軸に平行な光→焦点を通る ②中心を通る光→そのまま、の2本の交点に像。','物体を<b>焦点距離の2倍</b>の位置に置くと、反対側の2倍の位置に<b>同じ大きさ</b>の実像。','物体をレンズから遠ざける → 像はレンズに近づき、<b>小さく</b>なる。','像の大きさ＝物体の大きさ×（レンズ〜像の距離）÷（レンズ〜物体の距離）。'],
+ m:['全反射：水中から空気へ進むとき、入射角が大きいと境界ですべて反射する。','レンズの半分をかくしても、像は欠けずに<b>暗く</b>なるだけ。']},
+oto:{k:['音は物体の<b>振動</b>で伝わる。真空中では伝わらない。','<b>振幅</b>が大きい → 大きい音。<b>振動数</b>（1秒間の振動の回数・Hz）が多い → 高い音。','音の速さ（空気中）：約<b>340m/s</b>。'],
+ t:['弦の音を高くするには：弦を<b>短く</b>する・<b>強く張る</b>・<b>細く</b>する。','オシロスコープ：波の<b>高さ</b>＝振幅、波の<b>数</b>（混み具合）＝振動数。','振動数＝1 ÷ 1回の振動にかかる時間（目盛り×1目盛りの時間で求める）。','距離＝音の速さ×時間。こだまは往復なので<b>÷2</b>。'],
+ m:['音の大きさと高さを混同しない。「大きい」は振幅、「高い」は振動数。','光は音よりはるかに速い → 雷は光ってから音が届く。']},
+denryu:{k:['<b>オームの法則</b>：電圧（V）＝抵抗（Ω）×電流（A）','<b>直列</b>：電流はどこも同じ、電圧は分かれる、全体の抵抗＝和。','<b>並列</b>：電圧はどこも同じ、電流は分かれる、全体の抵抗は各抵抗より<b>小さい</b>。'],
+ t:['電流計は<b>直列</b>、電圧計は<b>並列</b>につなぐ。はじめは<b>いちばん大きい−端子</b>（5Aや300V）につなぐ。','mAはAに直す（40mA＝0.04A）。','並列回路の問題：まずわかっている電圧で各抵抗の電流を出し、たして全体の電流にする。'],
+ m:['<i>抵抗＝電圧÷電流（Ω＝V÷A）</i>','並列につなぐ抵抗をふやすと、全体の電流は<b>ふえる</b>。']},
+denryoku:{k:['<b>電力（W）＝電圧（V）×電流（A）</b>','<b>熱量・電力量（J）＝電力（W）×時間（秒）</b>','水の温度上昇は、電力と時間に<b>比例</b>する。','熱の伝わり方：<b>伝導</b>（ふれて伝わる）・<b>対流</b>（液体や気体が動く）・<b>放射</b>（光のように離れて伝わる）。'],
+ t:['分は秒に直す（5分＝300秒）。','グラフ：時間と上昇温度は<b>原点を通る直線</b>。電力が2倍なら傾きも2倍。','実際の水が得た熱量が計算より少ないのは、熱が<b>空気中などへ逃げた</b>から。','並列のとき、抵抗が小さいほうが電流が大きく、電力も<b>大きい</b>。'],
+ m:['kWh（キロワット時）＝kW×時間。単位をそろえる。','<i>W×秒＝J</i>']},
+jiba:{k:['磁界の向き：方位磁針の<b>N極</b>がさす向き。磁石の外ではN極→S極。','電流のまわりの磁界：電流の向きに右ねじを進めると、ねじを回す向き。','<b>電磁誘導</b>：コイルの中の磁界が変化すると電流（<b>誘導電流</b>）が流れる。','<b>静電気</b>：こすると<b>電子</b>（−）が移る。同じ種類はしりぞけ合い、ちがう種類は引き合う。'],
+ t:['電流が磁界から受ける力：電流の向きか磁界の向きの<b>どちらか</b>を逆にすると力も逆。両方逆なら同じ。','誘導電流を大きくするには：磁石を<b>速く</b>動かす・<b>強い</b>磁石・コイルの<b>巻数をふやす</b>。','陰極線（電子線）：<b>−極から出る</b>電子の流れ。＋極側に曲がる。'],
+ m:['電子は−の電気をもつ。電子を受けとった物は−、失った物は＋に帯電。','磁石を止めると誘導電流は流れない（変化がないから）。']},
+chikara:{k:['<b>フックの法則</b>：ばねののびは力の大きさに<b>比例</b>。','<b>圧力（Pa）＝力（N）÷面積（m²）</b>。100g ≒ 1N。','<b>浮力＝空気中の重さ − 水中の重さ</b>。水中にある部分の<b>体積が大きい</b>ほど大きい（深さには関係しない）。','水圧：<b>深いほど大きい</b>。あらゆる向きからはたらく。'],
+ t:['cm²はm²に直す（1cm²＝0.0001m²）。','斜面上の物体の重力は、<b>斜面に平行</b>な分力と<b>垂直</b>な分力に分ける。斜面が急なほど平行な分力が大きい。','作用・反作用：2つの物体の間で、同じ大きさ・逆向き・<b>相手の物体</b>にはたらく。','つり合い：1つの物体にはたらく、同じ大きさ・逆向き・一直線上の2力。'],
+ m:['つり合いの2力と作用・反作用の区別（はたらく物体が1つか2つか）。','物体を全部しずめたあとは、深くしても浮力は<b>変わらない</b>。']},
+undo:{k:['<b>速さ＝移動距離 ÷ 時間</b>。平均の速さと瞬間の速さ。','<b>等速直線運動</b>：力がはたらかない（つり合う）とき。距離は時間に比例。','斜面を下る運動：斜面に平行な力が一定にはたらき、速さが<b>一定の割合で</b>ふえる。','<b>仕事（J）＝力（N）×力の向きに動かした距離（m）</b>。仕事率（W）＝仕事÷時間。'],
+ t:['記録タイマー：1秒に50（または60）打点。5（6）打点＝<b>0.1秒</b>。テープの長さ÷0.1秒＝速さ。','<b>力学的エネルギー＝位置エネルギー＋運動エネルギー</b>。摩擦がなければ<b>一定</b>。','<b>仕事の原理</b>：道具を使っても仕事の大きさは変わらない（力は小さくなるが距離が長くなる）。','高さが高いほど・質量が大きいほど、位置エネルギーは大きい。'],
+ m:['gはNに、cmはmに直してから計算。','<i>斜面の角度を大きくすると、速さのふえ方が大きくなる</i>']},
+};
+/* ===== テーマ別対策：全単元の設問を、解説の中身（キーワード）でテーマに振り分ける ===== */
+const stripTags=s=>String(s).replace(/<[^>]+>/g,'');
+function themeItems(t){
+  const out=[];
+  for(const s of SUBJECTS){ if(s.key!==t.f) continue;
+    for(let n=1;n<=s.n;n++){ const id=`${s.key}-${n}`,u=UNITS[id]; if(!u) continue;
+      u.pages.forEach((pg,pi)=>(pg.qs||[]).forEach((q,qi)=>{ if(q[5]) return;
+        if(t.re.test(stripTags(q[3]+' '+q[4]))) out.push({id,n,s,pi,qi,pg,q}); })); } }
+  return out;
+}
+const THEME_COUNT={}; THEMES.forEach(t=>THEME_COUNT[t.id]=themeItems(t).length);
+
+function renderThemes(){
+  app.innerHTML=`
+  <div class="bar"><button class="back" id="back">◀ 単元一覧にもどる</button><h2>テーマ別対策</h2></div>
+  <p class="mode">よく出るテーマごとに、全単元から問題を集めました。テーマをえらんで、まとめて練習しよう。</p>
+  <div class="subjects">${SUBJECTS.map(s=>`
+    <section class="subj" style="--c:var(${s.color})">
+      <header><h2>${s.name}</h2><span>${s.sub}</span></header>
+      <div class="themes">${THEMES.filter(t=>t.f===s.key&&THEME_COUNT[t.id]).map(t=>`
+        <button class="theme" data-t="${t.id}"><span class="tn">${t.name}</span><span class="tc">${THEME_COUNT[t.id]}問</span></button>`).join('')}
+      </div>
+    </section>`).join('')}
+  </div>`;
+  document.getElementById('back').onclick=()=>{location.hash=''};
+  app.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{location.hash='theme-'+b.dataset.t});
+}
+
+function renderTheme(tid){
+  const t=THEMES.find(x=>x.id===tid),s=SUBJECTS.find(x=>x.key===t.f),items=themeItems(t);
+  let lastU='';
+  app.innerHTML=`
+  <div class="bar" style="--c:var(${s.color})"><button class="back" id="back">◀ テーマ一覧にもどる</button>
+    <h2>${s.name}：${t.name}<small>${items.length}問</small></h2></div>
+  ${GUIDE[tid]?`<section class="guide" style="--c:var(${s.color})"><h3>${t.name}のポイント</h3>
+    <h4>まずおさえること</h4><ul>${GUIDE[tid].k.map(x=>`<li>${x}</li>`).join('')}</ul>
+    <h4 class="t2">よく出る問われ方と解き方</h4><ul>${GUIDE[tid].t.map(x=>`<li>${x}</li>`).join('')}</ul>
+    <h4 class="t3">まちがえやすいところ</h4><ul>${GUIDE[tid].m.map(x=>`<li>${x}</li>`).join('')}</ul></section>`:''}
+  <p class="mode">ポイントを読んだら、下の問題で練習しよう。「問題を解く」で問題ページのその設問へ。解いたら「答えと解説」で確認しよう。</p>
+  <ol class="tlist" style="--c:var(${s.color})">${items.map((it,i)=>{
+    const head=it.id!==lastU?`<li class="tu"><b>${s.name}の ${CIRC[it.n-1]}</b><small>${(UNIT_LABELS[it.id]||'').replace('/','・')}</small></li>`:'';
+    lastU=it.id;
+    return head+`<li class="ti">
+      <div class="trow"><span class="tq">${it.pg.label}　${it.q[0]}${it.q[6]?' <span class="hard">ムズ</span>':''}</span>
+        <a class="tgo" href="#${it.id}@${it.pi}@${it.qi}">問題を解く ▶</a>
+        <button class="tans" data-i="${i}" aria-expanded="false">答えと解説</button></div>
+      <div class="tbody" id="tb${i}" hidden><p class="a">こたえ：${it.q[3]}</p><p class="exp">${it.q[4]}</p></div></li>`}).join('')}
+  </ol>`;
+  document.getElementById('back').onclick=()=>{location.hash='themes'};
+  app.querySelectorAll('.tans').forEach(b=>b.onclick=()=>{const el=document.getElementById('tb'+b.dataset.i),o=el.hidden;el.hidden=!o;b.setAttribute('aria-expanded',String(o));b.textContent=o?'とじる':'答えと解説'});
+  app.querySelectorAll('.tgo').forEach(a=>a.onclick=()=>{route.from='theme-'+tid});
+}
+
 let state={page:0,kaisetsu:false};
 
 function renderTop(){
@@ -317,6 +536,7 @@ function renderTop(){
     <h1><span class="subj-name" style="--leaf-c:var(--leaf-green)">理科</span><span class="w">業者カコモン</span><span class="w">類題トレーニング</span></h1>
     <p>単元をえらんで問題を解いたら、「解説を見る」ボタンで答えとポイントを確認しよう。</p>
   </section>
+  <a class="themebtn" href="#themes"><b>テーマ別対策</b><span>蒸散・イオン・中和・電流・地震など、よく出るテーマごとにまとめて練習</span><i>▶</i></a>
   <div class="legend"><span><i style="background:var(--bio)"></i>解説あり</span><span><i style="border:1.5px solid var(--line)"></i>準備中</span></div>
   <div class="subjects">${SUBJECTS.map(s=>`
     <section class="subj" style="--c:var(${s.color})">
@@ -336,7 +556,7 @@ function unit(id){
   if(!hasK) state.kaisetsu=false;
   app.innerHTML=`
   <div class="bar" style="--c:var(${s.color})">
-    <button class="back" id="back">◀ 単元一覧にもどる</button>
+    <button class="back" id="back">${route.from?'◀ テーマにもどる':'◀ 単元一覧にもどる'}</button>
     <h2>${s.name}の ${CIRC[n-1]}<small>${(UNIT_LABELS[id]||'').replace('/','・')}</small></h2>
     <div class="tabs" role="tablist">${u.pages.map((pg,i)=>`<button class="tab" role="tab" aria-selected="${i===state.page}" data-p="${i}">${pg.label}</button>`).join('')}</div>
     <button class="kbtn${state.kaisetsu?' on':''}" id="kbtn" ${hasK?'':'hidden'}>${state.kaisetsu?'問題にもどる':'解説を見る'}</button>
@@ -347,10 +567,11 @@ function unit(id){
     <img src="${p.img}" alt="${s.name}の${CIRC[n-1]} ${p.label}" width="1236" height="1749">
     ${hasK?`<svg viewBox="0 0 1236 1749" aria-hidden="true">${DEFS}${state.kaisetsu?p.svg.join(''):''}${(p.skip||[]).join('')}</svg>`:''}
     ${state.kaisetsu?(p.qs||[]).map((q,i)=>`<button class="qb${q[5]?' skip':''}" data-q="${i}" aria-pressed="false" style="left:${q[1]/12.36}%;top:${q[2]/17.49}%">${q[5]?'✕ ':''}${q[0]}${q[6]?'<span class="hard">ムズ</span>':''}</button>`).join(''):''}
+  ${(!state.kaisetsu&&state.mark!=null&&state.markPage===state.page&&p.qs&&p.qs[state.mark])?`<div class="qmark" id="qmark" style="top:${p.qs[state.mark][2]/17.49}%">ここ ▶ ${p.qs[state.mark][0]}</div>`:''}
   </div>
   ${state.kaisetsu?`<aside class="panel empty" id="panel" aria-live="polite"></aside>`:''}
   </div>`;
-  document.getElementById('back').onclick=()=>{location.hash=''};
+  document.getElementById('back').onclick=()=>{location.hash=route.from||''};
   app.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{state.page=+b.dataset.p;unit(id)});
   if(state.kaisetsu){
     const panel=document.getElementById('panel'),btns=[...app.querySelectorAll('.qb')];
@@ -370,10 +591,17 @@ function unit(id){
 }
 
 function route(){
-  const id=location.hash.slice(1);
-  if(UNITS[id]){ if(route.last!==id){state={page:0,kaisetsu:false}} route.last=id; unit(id); }
-  else { route.last=null; renderTop(); }
-  window.scrollTo(0,0);
+  const h=location.hash.slice(1),[id,pp,qq]=h.split('@');
+  if(h==='themes'){ route.last=null; route.from=null; renderThemes(); window.scrollTo(0,0); return; }
+  if(h.startsWith('theme-')&&THEMES.some(t=>t.id===h.slice(6))){ route.last=null; renderTheme(h.slice(6)); window.scrollTo(0,0); return; }
+  if(UNITS[id]){
+    if(route.last!==h){ state={page:+pp||0,kaisetsu:false,mark:qq!=null?+qq:null,markPage:+pp||0}; if(pp==null&&!route.keep) route.from=null; }
+    route.last=h; unit(id);
+    const mk=document.getElementById('qmark');
+    if(mk){ const y=mk.getBoundingClientRect().top+scrollY; window.scrollTo(0,Math.max(0,y-innerHeight*0.3)); } else window.scrollTo(0,0);
+    return;
+  }
+  route.last=null; route.from=null; renderTop(); window.scrollTo(0,0);
 }
 addEventListener('hashchange',route); route();
 </script>
