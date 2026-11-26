@@ -192,6 +192,9 @@ body::before{background:var(--bg)}
 .guide b{color:var(--red)}
 .guide i{font-style:normal;font-weight:700;color:var(--pt);border-bottom:2px solid var(--pt)}
 .guide details summary{cursor:pointer;font-weight:700;color:var(--muted);font-size:13px}
+.themebtn{display:inline-flex;align-self:flex-end;gap:6px;padding:6px 16px;border-radius:999px;box-shadow:0 2px 0 var(--brown);margin-top:-12px}
+.themebtn b{font-size:15px}
+.themebtn i{font-size:13px}
 </style>
 
 <div class="wrap" id="app"></div>
@@ -561,7 +564,7 @@ function renderTop(){
     <h1><span class="subj-name" style="--leaf-c:var(--leaf-green)">理科</span><span class="w">業者カコモン</span><span class="w">類題トレーニング</span></h1>
     <p>単元をえらんで問題を解いたら、「解説を見る」ボタンで答えとポイントを確認しよう。</p>
   </section>
-  <a class="themebtn" href="#themes"><b>テーマ別対策</b><span>蒸散・イオン・中和・電流・地震など、よく出るテーマごとにまとめて練習</span><i>▶</i></a>
+  <a class="themebtn" href="#themes"><b>テーマ別対策</b><i>▶</i></a>
   <div class="legend"><span><i style="background:var(--bio)"></i>解説あり</span><span><i style="border:1.5px solid var(--line)"></i>準備中</span></div>
   <div class="subjects">${SUBJECTS.map(s=>`
     <section class="subj" style="--c:var(${s.color})">
