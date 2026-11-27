@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="ja">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>数学　業者カコモン類題トレーニング</title><link rel="manifest" href="manifest.json"><link rel="icon" type="image/png" sizes="192x192" href="icon-192.png"><link rel="apple-touch-icon" href="apple-touch-icon.png"><meta name="theme-color" content="#FFF0DF"><meta name="apple-mobile-web-app-title" content="数学カコモン">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Zen+Maru+Gothic:wght@500;700;900&display=swap">
+<style>
+/* Layout: 単元を選ぶ一覧 → 1枚の問題用紙を大きく見せ、解説ボタンで同じ用紙に解説を重ねる */
+:root{
+  --bg:#f3f5f2; --surface:#ffffff; --fg:#1d2420; --muted:#5d6a62; --line:#d5dcd6;
+  --accent:#2f6f4f; --accent-fg:#ffffff; --red:#d32a2f;
+  --bio:#2f7d4f; --geo:#9a6a2c; --chem:#7a4aa8; --phys:#2a62b5;
+  --paper:#ffffff; --exp-bg:#e4f4fb; --exp-fg:#16323d; --pt:#1f5fd1;
+  --display:"Zen Maru Gothic","Hiragino Maru Gothic ProN","BIZ UDPGothic",sans-serif;
+  --body:"BIZ UDPGothic","Hiragino Sans","Yu Gothic",sans-serif;
+}
+html,body{background:var(--bg);color:var(--fg)}
+body{font-family:var(--body);font-size:15px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 40px}
+.wrap{max-width:980px;margin:0 auto;display:flex;flex-direction:column;gap:24px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* ---------- トップ ---------- */
+.hero{display:flex;flex-direction:column;gap:6px}
+.hero .eyebrow{font-size:12px;letter-spacing:.12em;color:var(--muted)}
+.hero h1{font-size:clamp(26px,5vw,38px);font-weight:900;line-height:1.25}
+.hero p{margin:0;color:var(--muted);max-width:60ch}
+.subjects{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:16px}
+.subj{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.subj header{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.subj h2{font-size:22px;color:var(--c)}
+.subj header span{font-size:12px;color:var(--muted)}
+.units{display:grid;grid-template-columns:repeat(auto-fill,minmax(52px,1fr));gap:8px}
+.unit{aspect-ratio:1;border-radius:10px;border:1.5px solid var(--line);background:transparent;color:var(--muted);
+  font-family:var(--display);font-size:20px;font-weight:700;display:grid;place-items:center;position:relative}
+.unit[disabled]{cursor:default;opacity:.55}
+.unit.ready{border-color:var(--c);background:var(--c);color:var(--surface)}
+.unit.ready:hover{filter:brightness(1.08)}
+.legend{font-size:13px;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.legend i{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-2px;margin-right:4px}
+
+/* ---------- 単元ページ ---------- */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:8px;
+  display:flex;flex-wrap:wrap;gap:10px;align-items:center;border-bottom:1px solid var(--line)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.back{border:none;background:none;color:var(--muted);padding:6px 4px;font-size:14px}
+.bar h2{font-size:22px;color:var(--c);flex:1 1 auto}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tab{border:1.5px solid var(--line);background:var(--surface);color:var(--fg);border-radius:999px;padding:6px 14px;font-size:14px}
+.tab[aria-selected="true"]{border-color:var(--c);background:var(--c);color:var(--surface);font-weight:700}
+.kbtn{border:none;border-radius:999px;padding:10px 22px;font-family:var(--display);font-weight:900;font-size:17px;
+  background:var(--red);color:#fff;box-shadow:0 2px 0 rgba(0,0,0,.15)}
+.kbtn.on{background:var(--surface);color:var(--fg);border:2px solid var(--fg)}
+.kbtn[hidden]{display:none!important}
+.mode{font-size:13px;color:var(--muted)}
+.sheet{position:relative;background:var(--paper);border-radius:6px;box-shadow:0 1px 3px rgba(0,0,0,.18);
+  max-width:100%;overflow:hidden}
+.sheet img{display:block;width:100%;height:auto}
+.sheet svg{position:absolute;inset:0;width:100%;height:100%}
+.sheet svg text{font-family:"BIZ UDPGothic",sans-serif;font-weight:700;paint-order:stroke;stroke:#fff;stroke-width:6px;stroke-linejoin:round}
+.kview{display:grid;gap:16px;align-items:start}
+@media (min-width:900px){.kview.k{grid-template-columns:minmax(0,1fr) 320px}}
+.sheet{container-type:inline-size}
+.qb{position:absolute;transform:translateY(-50%);z-index:2;border:2px solid #fff;border-radius:999px;
+  background:#1f5fd1;color:#fff;font-family:var(--body);font-weight:700;font-size:clamp(11px,1.9cqw,16px);
+  padding:.2em .6em;line-height:1.3;box-shadow:0 1px 3px rgba(0,0,0,.3);white-space:nowrap}
+.qb.skip{background:#8a8f8c}
+.qb .hard{font-size:.75em;background:#1e9a4a;border-radius:6px;padding:0 .3em;margin-left:.3em}
+.qb[aria-pressed="true"]{background:#f2b705;color:#1d2420;outline:3px solid #1f5fd1}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:10px}
+@media (min-width:900px){.panel{position:sticky;top:calc(env(safe-area-inset-top,0px) + 72px);max-height:calc(100vh - 100px);overflow:auto}}
+@media (max-width:899px){
+  .panel{position:fixed;left:max(10px,env(safe-area-inset-left,0px));right:max(10px,env(safe-area-inset-right,0px));
+    bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:20;max-height:45vh;overflow:auto;box-shadow:0 6px 24px rgba(0,0,0,.25)}
+  .panel.empty{display:none}
+  .kview.k{padding-bottom:46vh}
+}
+.panel h3{font-size:20px;color:var(--c);display:flex;align-items:center;gap:8px}
+.panel h3 button{margin-left:auto;border:none;background:var(--bg);color:var(--fg);border-radius:999px;width:32px;height:32px;font-size:16px}
+.panel .a{font-weight:700;font-size:19px;margin:0;line-height:1.5}
+.exp b{color:var(--red);font-weight:700}
+.exp i{font-style:normal;font-weight:700;color:var(--pt);display:inline-block;margin-top:4px;border-bottom:2px solid var(--pt)}
+.panel .hint{color:var(--muted);margin:0}
+.panel .skipa{color:var(--red)}
+.ans{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.ans h3{font-size:18px;margin-bottom:8px}
+.ans ol{margin:0;padding:0;list-style:none;display:grid;gap:6px}
+.ans li{display:grid;grid-template-columns:4.2em 1fr;gap:8px;min-width:0}
+.ans li b{color:var(--c);font-variant-numeric:tabular-nums}
+.ans small{color:var(--muted)}
+.ans ol{gap:14px}
+.ans .a{display:flex;flex-direction:column;gap:6px;min-width:0}
+.ans .a>span{font-weight:700}
+.exp{margin:0;font-size:14px;line-height:1.9!important;background:var(--exp-bg);color:var(--exp-fg);border-radius:10px;padding:10px 14px;line-height:1.75}
+.skip span{color:var(--red);font-weight:700}
+.note{font-size:13px;color:var(--muted);margin:0}
+@media (max-width:560px){.bar h2{flex-basis:100%}}
+@media (prefers-reduced-motion:no-preference){.sheet svg{transition:opacity .2s}}
+.switch{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;border:2px solid var(--accent);color:var(--accent);background:var(--surface);border-radius:999px;padding:6px 16px;font-family:var(--display);font-weight:700;text-decoration:none}
+.switch:hover{background:var(--accent);color:var(--accent-fg)}
+.bar .switch{padding:4px 12px;font-size:13px}
+
+/* ===== ロゴ（イナサト Flick Reading）のテイスト：クリーム地・茶色の文字・パステルの葉 ===== */
+:root{
+  --bg:#fff0dd; --surface:#fffaf2; --fg:#5e4329; --muted:#8a6a48; --line:#e2c9a6; --brown:#95714d;
+  --accent:#95714d; --accent-fg:#fffaf2; --red:#d6453d;
+  --exp-bg:#fff6e4; --exp-fg:#4a3420; --pt:#2f6fc0;
+  --leaf-pink:#f4c3c8; --leaf-orange:#f6cfa5; --leaf-yellow:#fbeaa6; --leaf-green:#c3e5cd; --leaf-blue:#bcdcf3; --leaf-lav:#d9cdf1;
+  color-scheme:light;
+}
+html,body{background:var(--bg);color:var(--fg)}
+body{font-family:var(--body)}
+.hero{align-items:flex-start;gap:8px}
+.hero .top{display:flex;align-items:center;gap:12px;width:100%;flex-wrap:wrap}
+.hero .sprig{width:44px;height:52px;flex:none}
+.hero h1 .w{display:inline-block}
+.hero .eyebrow{flex:1 1 0;min-width:0;color:var(--muted);font-family:var(--display);font-weight:700}
+.hero h1{color:var(--fg);font-size:clamp(22px,4.6vw,34px);line-height:1.35}
+.hero h1 .subj-name{display:inline-block;background:var(--leaf-c);border:2.5px solid var(--brown);border-radius:999px;padding:0 .5em;margin-right:.35em}
+.hero p{color:var(--muted)}
+.switch{margin-left:auto;align-self:center;border:2.5px solid var(--brown);color:var(--fg);background:var(--sw);border-radius:999px;padding:6px 16px;font-family:var(--display);font-weight:900;text-decoration:none;box-shadow:0 2px 0 var(--brown)}
+.switch:hover{background:var(--sw);color:var(--fg);filter:brightness(1.04);transform:translateY(-1px)}
+.subj{background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:16px}
+.subj header{border-bottom:2px dashed var(--line);padding-bottom:8px}
+.subj h2{color:var(--fg);display:flex;align-items:center;gap:8px}
+.subj h2::before{content:"";width:18px;height:26px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:var(--c);border:2px solid var(--brown);transform:rotate(-20deg)}
+.subj header span{color:var(--muted)}
+.units{grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:6px}
+.unit{aspect-ratio:auto;display:flex;align-items:center;gap:5px;text-align:left;padding:5px 7px;min-height:40px;border-radius:12px;border:2px solid var(--brown);background:var(--surface);color:var(--fg);font-size:17px;line-height:1.15}
+.unit.ready{border-color:var(--brown);background:var(--c);color:var(--fg)}
+.unit.ready:hover{filter:brightness(1.03);transform:translateY(-1px)}
+.unit .n{font-family:var(--display);font-weight:900;font-size:18px;flex:none}
+.unit .lb{font-family:var(--body);font-weight:700;font-size:10.5px;line-height:1.25;color:#5e4329;word-break:keep-all;overflow-wrap:anywhere}
+.legend{display:none}
+.bar{background:var(--bg);border-bottom:2px solid var(--line)}
+body::before{background:var(--bg)}
+.back{display:inline-flex;align-items:center;gap:6px;border:2.5px solid var(--brown);background:var(--leaf-yellow);color:var(--fg);border-radius:999px;padding:6px 14px;font-family:var(--display);font-weight:900;font-size:15px;box-shadow:0 2px 0 var(--brown)}
+.back:hover{filter:brightness(1.03)}
+.bar h2{color:var(--fg)}
+.bar h2 small{font-size:13px;color:var(--muted);font-family:var(--body);margin-left:6px}
+.tab{border:2px solid var(--line);background:var(--surface);color:var(--fg)}
+.tab[aria-selected="true"]{border-color:var(--brown);background:var(--c);color:var(--fg)}
+.kbtn{background:#f08f7a;color:#fff;border:2.5px solid var(--brown);box-shadow:0 2px 0 var(--brown);text-shadow:0 1px 0 rgba(0,0,0,.15)}
+.kbtn.on{background:var(--surface);color:var(--fg);border:2.5px solid var(--brown);text-shadow:none}
+.mode{color:var(--muted)}
+.sheet{box-shadow:0 1px 4px rgba(94,67,41,.25)}
+.panel{background:var(--surface);border:2px solid var(--brown)}
+.panel h3{color:var(--fg)}
+.panel h3 button{background:var(--bg);color:var(--fg)}
+.exp{border:1.5px dashed var(--line)}
+.ans{background:var(--surface);border:2px solid var(--line)}
+.ans li b{color:var(--fg)}
+:root{--mon:var(--leaf-blue);--kan:var(--leaf-green);--zu:var(--leaf-orange);--sho:var(--leaf-lav)}
+/* ---------- テーマ別対策 ---------- */
+.themebtn{display:grid;grid-template-columns:1fr auto;column-gap:12px;row-gap:2px;align-items:center;background:var(--leaf-yellow);border:2.5px solid var(--brown);border-radius:18px;padding:14px 18px;color:var(--fg);text-decoration:none;box-shadow:0 3px 0 var(--brown)}
+.themebtn b{font-family:var(--display);font-weight:900;font-size:22px}
+.themebtn span{font-size:13px;color:var(--muted)}
+.themebtn i{grid-column:2;grid-row:1/3;font-style:normal;font-family:var(--display);font-weight:900;font-size:20px}
+.themebtn:hover{filter:brightness(1.03);transform:translateY(-1px)}
+.themes{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.theme{display:flex;align-items:center;justify-content:space-between;gap:6px;text-align:left;border:2px solid var(--brown);border-radius:12px;background:var(--c);color:var(--fg);padding:8px 10px;font-family:var(--display);font-weight:700;font-size:14px;line-height:1.3}
+.theme:hover{filter:brightness(1.03);transform:translateY(-1px)}
+.theme .tc{flex:none;font-family:var(--body);font-size:11px;background:var(--surface);border:1.5px solid var(--brown);border-radius:999px;padding:0 7px}
+.tlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.tu{display:flex;align-items:baseline;gap:8px;margin-top:10px;padding:4px 12px;border-radius:999px;background:var(--c);border:2px solid var(--brown);align-self:flex-start}
+.tu b{font-family:var(--display);font-size:16px}
+.tu small{font-size:12px;color:var(--fg)}
+.ti{background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:10px 12px}
+.trow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tq{font-weight:700;flex:1 1 auto}
+.tq .hard{font-size:11px;background:#1e9a4a;color:#fff;border-radius:6px;padding:0 5px}
+.tgo,.tans{border:2px solid var(--brown);border-radius:999px;padding:4px 12px;font-family:var(--display);font-weight:700;font-size:13px;color:var(--fg);text-decoration:none;background:var(--leaf-yellow)}
+.tans{background:#f08f7a;color:#fff}
+.tans[aria-expanded="true"]{background:var(--surface);color:var(--fg)}
+.tbody{margin-top:8px;display:flex;flex-direction:column;gap:6px}
+.tbody[hidden]{display:none}
+.tbody .a{font-weight:700;margin:0}
+.crop{position:relative;overflow:hidden;margin-top:8px;border:1.5px solid var(--line);border-radius:10px;background:#fff}
+.crop img{position:absolute;top:0;left:0;width:100%;height:auto;display:block}
+.qmark{position:absolute;left:0;transform:translateY(-50%);z-index:3;background:#f08f7a;color:#fff;border:2px solid #fff;border-radius:999px;padding:.15em .6em;font-weight:700;font-size:clamp(11px,1.9cqw,16px);box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.guide{background:var(--surface);border:2.5px solid var(--brown);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:6px}
+.guide>h3{font-size:19px;display:flex;align-items:center;gap:8px}
+.guide>h3::before{content:"";width:14px;height:20px;border-radius:50%/60% 60% 40% 40%;background:var(--c);border:2px solid var(--brown);transform:rotate(-20deg)}
+.guide h4{margin:8px 0 2px;font-family:var(--display);font-size:15px;display:inline-block;align-self:flex-start;background:var(--c);border-radius:999px;padding:1px 12px}
+.guide h4.t2{background:var(--leaf-yellow)}
+.guide h4.t3{background:#fbd5cf}
+.guide ul{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:5px;font-size:15px;line-height:1.75}
+.guide b{color:var(--red)}
+.guide i{font-style:normal;font-weight:700;color:var(--pt);border-bottom:2px solid var(--pt)}
+.guide details summary{cursor:pointer;font-weight:700;color:var(--muted);font-size:13px}
+.themebtn{display:inline-flex;align-self:flex-end;gap:6px;padding:6px 16px;border-radius:999px;box-shadow:0 2px 0 var(--brown);margin-top:-12px}
+.themebtn b{font-size:15px}
+.themebtn i{font-size:13px}
+</style>
+
+<div class="wrap" id="app"></div>
+<script src="data.js"></script>
+
+<script>
+/* ===== 単元一覧（PDFの並び順どおり。1単元＝問題2枚＋解答用紙＋解説入り2枚） ===== */
+const SUBJECTS=[
+  {key:'mon', name:'大問1・2', sub:'計算・小問集合・資料・方程式・空間図形', n:8, color:'--mon'},
+  {key:'kan', name:'関数', sub:'一次関数・二次関数の利用（大問3）', n:16, color:'--kan'},
+  {key:'zu',  name:'図形', sub:'平面・空間図形・三平方の定理・相似（大問4）', n:11, color:'--zu'},
+  {key:'sho', name:'証明', sub:'合同・相似の証明', n:6, color:'--sho'},
+];
+const UNIT_LABELS={"mon-1":"パスポート実戦第1回/問1・問2","mon-2":"業者テスト第1回/問1・問2","mon-3":"パスポート予想第1回/問1・問2","mon-4":"業者テスト第2回/問1・問2","mon-5":"パスポート実戦第2回/問1・問2","mon-6":"業者テスト第3回/問1・問2","mon-7":"パスポート実戦第4回/問1・問2","mon-8":"業者テスト第4回/問1・問2","kan-1":"一次関数/みはじ①","kan-2":"一次関数/水道①","kan-3":"一次関数/みはじ②","kan-4":"一次関数/みはじ③","kan-5":"2次関数/グラフ①","kan-6":"一次関数/水道②","kan-7":"一次関数/水道③","kan-8":"一次関数/料金プラン①","kan-9":"2次関数/グラフ②","kan-10":"一次関数/みはじ④","kan-11":"一次関数/みはじ⑤","kan-12":"2次関数/グラフ③","kan-13":"2次関数/グラフ④","kan-14":"一次関数/動点①","kan-15":"一次関数/水道（加湿器）④","kan-16":"2次関数/グラフ⑤","zu-1":"三角すい・円と相似","zu-2":"円に内接する四角形","zu-3":"直方体","zu-4":"折り紙の三角すい・円","zu-5":"正方形の折り返し","zu-6":"円すい・長方形","zu-7":"正四面体・長方形","zu-8":"正四角すい・円","zu-9":"円と正三角形","zu-10":"角の二等分線と円","zu-11":"回転体・回転移動","sho-1":"二等辺三角形と合同","sho-2":"円と相似・半円","sho-3":"二等辺三角形と円","sho-4":"円と合同・平行四辺形","sho-5":"正方形の折り返し","sho-6":"半円と円周角"};
+const CIRC='①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳';
+
+/* ===== 解説の描き方：元の問題用紙（1236×1749）と同じ座標で打ち込む ===== */
+const R='#d32a2f',B='#1f5fd1',G='#1e9a4a',K='#555';
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+const T=(x,y,s,c,str,anchor='start')=>`<text x="${x}" y="${y}" font-size="${s}" fill="${c}" text-anchor="${anchor}">${esc(str)}</text>`;
+const TL=(x,y,s,c,lines,gap=1.3)=>lines.map((l,i)=>T(x,y+i*s*gap,s,c,l)).join('');
+const O=(cx,cy,rx,ry,c=R)=>`<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry??rx}" fill="none" stroke="${c}" stroke-width="3.5"/>`;
+const L=(x1,y1,x2,y2,c=R,w=3,arrow=false)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}" stroke-linecap="round"${arrow?` marker-end="url(#ah${c.slice(1)})"`:''}/>`;
+const U=(x1,x2,y)=>L(x1,y,x2,y,G,4);
+const BOX=(x,y,w,h,c,fill='rgba(255,255,255,.94)')=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="10" fill="${fill}" stroke="${c}" stroke-width="3"/>`;
+const TAG=(x,y,label,c)=>`<rect x="${x}" y="${y-26}" width="${label.length*24+20}" height="34" rx="17" fill="${c}"/>`+
+  `<text x="${x+10}" y="${y-2}" font-size="24" fill="#fff" style="stroke:none">${esc(label)}</text>`;
+const DEFS=`<defs>${[R,B,G].map(c=>`<marker id="ah${c.slice(1)}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="${c}"/></marker>`).join('')}</defs>`;
+
+/* ===== 試作：生物の① ===== */
+const UNITS={};
+
+/* ===== data.js（各単元の打ち込みデータ）を読み込んで UNITS に追加 ===== */
+const COL={R,B,G,K};
+function renderItem(it){
+  const [k,...a]=it, c=v=>COL[v]||v;
+  switch(k){
+    case 'h': return `<rect x="${a[0]}" y="${a[1]}" width="${a[2]}" height="${a[3]}" fill="#ffe600" opacity=".45" style="mix-blend-mode:multiply"/>`;
+    case 't': return T(a[0],a[1],a[2],c(a[3]),a[4],a[5]||'start');
+    case 'tl': return TL(a[0],a[1],a[2],c(a[3]),a[4],a[5]||1.3);
+    case 'o': return O(a[0],a[1],a[2],a[3],c(a[4]||'R'));
+    case 'u': return U(a[0],a[1],a[2]);
+    case 'img': return `<rect x="${a[0]}" y="${a[1]}" width="${a[2]}" height="${a[3]}" fill="#fff"/><image href="${a[4]}" x="${a[0]}" y="${a[1]}" width="${a[2]}" height="${a[3]}"/>`;
+    case 'f': return `<ellipse cx="${a[0]}" cy="${a[1]}" rx="${a[2]}" ry="${a[3]}" fill="${R}" opacity=".85"/>`;
+    case 'l': return L(a[0],a[1],a[2],a[3],c(a[4]||'R'),a[5]||3,!!a[6]);
+    case 'x': { const [x1,y1,x2,y2]=a, cx=(x1+x2)/2, cy=(y1+y2)/2;
+      return L(x1,y1,x2,y2,R,5)+L(x1,y2,x2,y1,R,5)+BOX(cx-165,cy-31,330,62,R,'#fff')+T(cx,cy+12,30,R,'範囲外なので飛ばす！','middle'); }
+  }
+  return '';
+}
+const PN='①②③④⑤⑥⑦⑧';
+for(const [key,u] of Object.entries(window.UNIT_DATA||{})){
+  const id=key.replace(/^([a-z]+)(\d+)$/,'$1-$2');
+  UNITS[id]={pages:[...u.pages.map((pg,i)=>({label:'問題'+PN[i],img:pg.img,h:pg.h||1749,
+      svg:pg.items.map(renderItem), skip:pg.skip.map(renderItem),
+      qs:pg.qs.map(q=>[q[0],8,q[1],q[2],q[3],q[4]==='skip'?1:0,q[4]==='hard'?1:0])})),
+    ...[].concat(u.sheet||[]).map((s,i,a)=>({label:'解答'+(a.length>1?PN[i]:''),img:s.img,h:s.h,svg:null}))]};
+}
+
+const app=document.getElementById('app');
+const THEMES=[
+ {f:'mon',id:'keisan',g:'main',name:'正負の数・文字式の計算',re:/負|正×|累乗|絶対値|符号|かけ算が先|わり算が先|分母を|かっこ|逆数|2乗|展開|因数分解|移項|たし算|ひき算/},
+ {f:'mon',id:'route',g:'main',name:'平方根',re:/√|有理化|ルート|平方根|素因数分解/},
+ {f:'mon',id:'hoteishiki',g:'main',name:'方程式（解の公式・連立）',re:/t＝|解の公式|連立|代入|方程式|x＝/},
+ {f:'mon',id:'kansu1',g:'main',name:'比例・反比例・関数',re:/比例|反比例|y＝ax|変域|一次関数|2乗に比例|xy＝/},
+ {f:'mon',id:'kakuritsu',g:'main',name:'確率',re:/通り|確率|あたり|さいころ|表裏/},
+ {f:'mon',id:'data',g:'main',name:'データの活用・標本調査',re:/以上|中央値|最頻値|階級|相対度数|平均|範囲|標本|度数|母集団|無作為|割合/},
+ {f:'mon',id:'zukei1',g:'main',name:'平面図形・作図',re:/証明|正三角形|二等辺|平行線|∠|作図|垂直二等分線|二等分線|円周角|中心角|弧|相似|ひし形|垂線|外角/},
+ {f:'mon',id:'kukan1',g:'main',name:'空間図形',re:/三平方|空間|体積|表面積|円すい|三角すい|立方体|展開図|母線|ねじれ|正八面体|cm³|回転/},
+ {f:'mon',id:'kisoku',g:'main',name:'規則性・文章題',re:/20n|n＝|規則|くり返し|n回目|m回目|番目|枚|増減|金額|人数|%|（g）/},
+ {f:'kan',id:'mihaji',g:'main',name:'速さ・道のり（みはじ）',re:/分|分速|時速|秒速|道のり|すれ違|出発|追いこ|速さ|駅|分後/},
+ {f:'kan',id:'suiso',g:'main',name:'水そう・水の量',re:/cm|水面|水|しきり|あふれ|タンク|L|cm³/},
+ {f:'kan',id:'ryokin',g:'main',name:'料金プラン',re:/安い|交点|料金|円|プラン|基本/},
+ {f:'kan',id:'douten',g:'main',name:'動点と面積',re:/P は|t＝|動点|往復|△CDP|△ABQ|△PBC|△PAB|PD|BQ/},
+ {f:'kan',id:'graph2',g:'main',name:'y＝ax² のグラフと図形',re:/反比例|\/x|P\(|Q\(|y＝ax²|ax²|a＝|座標|切片|平行四辺形|変域|x²/},
+ {f:'kan',id:'shikiwo',g:'S',name:'グラフから式を作る',re:/傾き|切片|y＝[−0-9a-z]+x|式/},
+ {f:'zu',id:'sanpei',g:'main',name:'三平方の定理',re:/直角三角形|三平方|√\(|直角二等辺|30°・60°|1：√3|1：1：√2|対角線/},
+ {f:'zu',id:'soji',g:'main',name:'相似と比・面積比',re:/÷2|面積|合同|座標|相似|∽|面積比|相似比|平行線|：|比/},
+ {f:'zu',id:'en',g:'main',name:'円・円周角',re:/外角|円周角|中心角|弧|直径|内接|交わる弦/},
+ {f:'zu',id:'kukan',g:'main',name:'空間図形（体積・表面積）',re:/断面|体積|表面積|円すい|三角すい|四角すい|直方体|立方体|正四面体|展開図|母線|円柱|cm³|ねじれ/},
+ {f:'zu',id:'orikaeshi',g:'main',name:'折り返し・回転・作図',re:/対称|折り|折り目|作図|垂直二等分線|回転|おうぎ形/},
+ {f:'zu',id:'shomei',g:'S',name:'図形の証明',re:/証明/},
+ {f:'sho',id:'godo',g:'main',name:'合同の証明',re:/共通な辺|合同|≡|1組の辺|2組の辺とその間|斜辺|両端の角/},
+ {f:'sho',id:'sojisho',g:'main',name:'相似の証明',re:/共通な角|相似|∽|2組の角|辺の比/},
+ {f:'sho',id:'enshomei',g:'S',name:'円周角を使う証明',re:/円周角|弧/},
+ {f:'sho',id:'shokeisan',g:'main',ansOnly:1,name:'証明のあとの計算',re:/作図|cm|°|π|：/},
+];
+const GUIDE={
+keisan:{k:['ひき算は<b>符号を変えてたし算</b>：5−(−12)＝5＋12','計算の順番は <b>かっこ → 累乗 → かけ算・わり算 → たし算・ひき算</b>','<b>−3²</b>＝−9（2乗は3だけ）、<b>(−3)²</b>＝9（かっこごと2乗）','わり算は<b>逆数</b>をかける：÷(−3/4)＝×(−4/3)'],
+ t:['分数の文字式は<b>分母をそろえて</b>、分子にかっこをつけてからひく。','展開してから整理 → <b>たして○、かけて△</b> の2数をさがして因数分解。'],
+ m:['分子のひき算で、うしろの項の<b>符号を変え忘れる</b>。','約分できるのは<b>全部の項</b>が同じ数でわれるときだけ。']},
+route:{k:['ルートの中は<b>いちばん小さく</b>する：√48＝√(16×3)＝<b>4√3</b>','たし算・ひき算は<b>ルートの中が同じもの</b>どうしだけ。','分母のルートは<b>有理化</b>：18/√6＝18√6/6＝3√6'],
+ t:['「√(○÷n) が整数」「√(○×n) が自然数」は、○ を<b>素因数分解</b>して、ペアにならない数を考える。','√a×√b＝√(ab) をしてから、中を小さくする。'],
+ m:['√12＋√3＝√15 は<b>まちがい</b>（2√3＋√3＝3√3）。','解の公式のあとの約分は、<b>ルートを小さくしてから</b>全部の項をわる。']},
+hoteishiki:{k:['2次方程式は ①因数分解 → ②<b>( )²＝○ なら平方根</b> → ③<b>解の公式</b> の順で考える。','解の公式：x＝{−b±√(b²−4ac)}/2a','「解が5」と言われたら <b>x＝5 を代入</b>して a を求める。'],
+ t:['連立方程式は<b>加減法</b>か<b>代入法</b>。小数・分数は先に整数にする（10倍・100倍）。','文章題は「何を x にするか」を最初に書き、<b>求めるもの</b>（量？金額？）を最後に確認。'],
+ m:['移項するときの<b>符号</b>。','答えが「5月4日の人数」のように、<b>x、y をそのまま答えない</b>問題がある。']},
+kansu1:{k:['比例 <b>y＝ax</b>、反比例 <b>y＝a/x</b>（xy＝一定）、一次関数 y＝ax＋b、2乗に比例 <b>y＝ax²</b>','y＝ax² の変域：x の変域に<b>0 をふくむ</b>と、y の最小（または最大）は <b>0</b>'],
+ t:['「どれが比例か」は、式を <b>y＝</b> の形に直してから見分ける。','y＝ax² で y の変域から a を求めるときは、<b>0 からいちばん遠い x</b> を使う。'],
+ m:['−2≦x≦4 のとき、x＝−2 ではなく <b>x＝4</b> で y が最大（最小）になる。']},
+kakuritsu:{k:['確率＝<b>あてはまる場合の数 ÷ 全部の場合の数</b>','さいころ2つは <b>36通り</b>、コイン3枚は <b>8通り</b>'],
+ t:['表や樹形図で<b>もれなく・重ならず</b>数える。','「〜でない確率」は <b>1−（〜である確率）</b> が速い。'],
+ m:['同時に2枚取り出す（順番なし）か、1枚ずつ並べる（順番あり）かで数が変わる。']},
+data:{k:['<b>最頻値</b>＝いちばん多い階級の<b>階級値</b>（まん中の値）','<b>中央値</b>＝まん中の値。人数が偶数なら<b>まん中2つの平均</b>','<b>相対度数</b>＝その階級の度数÷合計','<b>平均×人数＝合計</b>'],
+ t:['人数がちがう2つの集団は<b>割合（相対度数）</b>で比べる。','標本調査：<b>標本の割合＝母集団の割合</b>として比例式を立てる。','理由を書く問題は「○○を比べると、△△だから」と<b>数字を入れて</b>書く。'],
+ m:['「平均より大きい＝上半分」とは<b>かぎらない</b>（上半分は中央値で考える）。','中央値の階級は、<b>累積度数</b>を上から数えて確かめる。']},
+zukei1:{k:['<b>垂直二等分線</b>：2点から等しい距離の点の集まり（折り目の線）','<b>角の二等分線</b>：2辺から等しい距離の点の集まり','円周角＝<b>中心角の半分</b>、同じ弧の円周角は等しい'],
+ t:['作図は「どんな点・線をかけばよいか」を言葉にしてから（垂線？二等分線？）。','相似は、平行線から<b>同じ形の三角形</b>を見つけ、頂点からの長さで比をとる。'],
+ m:['相似比は「となりの部分どうし（4：5）」ではなく「<b>頂点からの長さ</b>（4：9）」。']},
+kukan1:{k:['すい体の体積＝<b>1/3×底面積×高さ</b>','円すいの展開図：おうぎ形の中心角＝360×<b>半径/母線</b>','<b>ねじれの位置</b>＝平行でなく、交わらない辺'],
+ t:['空間の長さは<b>三平方の定理を2回</b>（まず底面の対角線、つぎに高さ）。','正八面体は<b>正四角すい2つ</b>に分けて考える。'],
+ m:['1/3 をかけ忘れる。','回転体は、どんな立体（円柱？円すい？）ができるか<b>絵にかいて</b>から計算する。']},
+kisoku:{k:['くり返しは<b>何個で1組か</b>を見つけ、<b>わり算のあまり</b>で何番目かを決める。','n番目の式は、1番目・2番目・3番目を書いて<b>ふえ方</b>を見る。'],
+ t:['表にして「1つふえると○ふえる」→ 式は <b>○n＋△</b>。','式ができたら n に小さい数を入れて<b>確かめる</b>。'],
+ m:['あまり0 のときは「最後の数」。']},
+mihaji:{k:['<b>速さ＝道のり÷時間</b>、グラフの<b>傾き＝速さ</b>','グラフが<b>横ばい</b>＝止まっている','2人が出会う・追いつく＝<b>2つのグラフの交点</b>'],
+ t:['式は「(x 座標, y 座標) を2つ読む → 傾き → 切片」の順で作る。','出発がおそい人の式は <b>y＝速さ×(x−出発時刻)</b> にすると楽。','答えが「○時○分」「○分○秒後」なら、0.6分＝<b>36秒</b>などに直す。'],
+ m:['時速と分速のまちがい（時速90km＝分速<b>1.5km</b>）。','「何分後」と「何時何分」、<b>基準の時刻</b>を確認。']},
+suiso:{k:['水面の高さの上がり方＝<b>1分間に入る水の量÷底面積</b>','しきりの高さまで来ると、水はとなりへあふれる → 高さは<b>一定（横ばい）</b>'],
+ t:['底面積が変わるたびに<b>グラフの傾きが変わる</b>。区切りの時刻を表にする。','入る量と出る量があるときは <b>入る−出る</b> がふえ方。'],
+ m:['cm³ と L（1L＝1000cm³）。','どの部分の水面の高さを聞かれているか（左？右？）。']},
+ryokin:{k:['料金＝<b>基本料金＋1分あたり×時間</b>','「○分までは定額」は、<b>横の線</b>のグラフ'],
+ t:['プランどうしの交点で安さが入れかわる。<b>交点の x</b> を連立方程式で求める。','「いちばん安いのは？」は、そのときの<b>いちばん下のグラフ</b>。'],
+ m:['定額の部分をこえた「<b>こえた分だけ</b>」に料金がかかることに注意（x−60 など）。']},
+douten:{k:['動く点の位置で<b>場合分け</b>（どの辺の上にいるか）','底辺か高さが<b>一定</b>の三角形を見つける'],
+ t:['面積を t の式にして、「面積が等しい」→ 方程式。','t の<b>範囲</b>（0≦t≦4 など）に合う答えだけを選ぶ。'],
+ m:['往復するとき、もどり道の長さは <b>全体−進んだ分</b>。']},
+graph2:{k:['点がグラフ上 → <b>座標を式に代入</b>','2点を通る直線：傾き＝<b>y の増加量÷x の増加量</b>','三角形の面積は、<b>y 軸や x 軸で2つに分けて</b>計算'],
+ t:['平行四辺形は <b>向かい合う辺の長さとかたむきが同じ</b>。','面積を2等分する直線は、<b>対角線の交点（中点）</b>を通る。'],
+ m:['y＝ax² の変域で、x の変域に 0 をふくむとき最小は 0。','座標の<b>符号</b>（負の座標）のまちがい。']},
+shikiwo:{k:['直線の式 y＝ax＋b：<b>a＝傾き</b>、<b>b＝切片</b>（x＝0 のときの y）'],t:['グラフから読める点を2つ選ぶ（目もりの交点）。'],m:['傾きが負になるところ（へっていく）。']},
+sanpei:{k:['<b>a²＋b²＝c²</b>（c は斜辺）','直角二等辺三角形 <b>1：1：√2</b>、30°・60°・90° は <b>1：√3：2</b>','直方体の対角線＝<b>√(a²＋b²＋c²)</b>'],
+ t:['直角三角形を<b>自分で作る</b>（垂線をおろす、対角線をひく）。','折り返しは、折った辺の長さを x として三平方の方程式。'],
+ m:['どこが斜辺か（直角の向かい側）。','√ の計算で、2乗をとき忘れる。']},
+soji:{k:['相似条件：<b>3組の辺の比</b>／<b>2組の辺の比とその間の角</b>／<b>2組の角</b>','面積比＝相似比の<b>2乗</b>、体積比＝<b>3乗</b>','平行線 → 錯角・同位角が等しい → 相似な三角形'],
+ t:['「AE：EG」などは、平行線や相似な三角形で比を<b>2回</b>つなぐ。','面積は「全体の何倍か」を相似比と高さの比で出す。'],
+ m:['対応する頂点の順番をそろえて書く。']},
+en:{k:['円周角＝<b>中心角の半分</b>、同じ弧の円周角は等しい','直径の円周角＝<b>90°</b>','円に内接する四角形の向かい合う角の和は<b>180°</b>'],
+ t:['等しい弧 → 等しい円周角 → <b>二等辺三角形・相似</b>を見つける。','交わる2本の弦：<b>AE×EC＝BE×ED</b>（相似から）'],
+ m:['どの弧に対する円周角か、<b>弧の両はしの点</b>で確認。']},
+kukan:{k:['すい体＝<b>1/3×底面積×高さ</b>','円すいの展開図：中心角＝360×<b>半径/母線</b>、側面積＝<b>π×半径×母線</b>'],
+ t:['高さが出ないときは<b>体積を2通り</b>で表す（三角すいの高さ）。','最短の長さは<b>展開図の直線</b>。','回転体は<b>円柱−円すい</b>などの組み合わせで考える。'],
+ m:['底面の円の面積を表面積に入れ忘れる。']},
+orikaeshi:{k:['折り返し → <b>折る前と後で長さ・角が等しい</b>','折り目は、重なる2点を結ぶ線分の<b>垂直二等分線</b>','回転移動 → 回転の中心からの距離と<b>回転角</b>が等しい'],
+ t:['等しい長さを x で表し、<b>三平方</b>で方程式。','回転で動いた点の道のり＝<b>おうぎ形の弧</b>。'],
+ m:['折り返した図形の<b>対応する点</b>をとりちがえる。']},
+shomei:{k:['証明は <b>どの三角形で</b> → <b>根拠つきで等しいもの</b> → <b>条件</b> → <b>結論</b>'],t:['円が出たら<b>円周角</b>、平行線なら<b>錯角・同位角</b>を最初にさがす。'],m:['根拠（仮定より、共通、対頂角…）を書き忘れる。']},
+godo:{k:['合同条件：<b>3組の辺</b>／<b>2組の辺とその間の角</b>／<b>1組の辺とその両端の角</b>','直角三角形：<b>斜辺と1つの鋭角</b>／<b>斜辺と他の1辺</b>'],
+ t:['等しいものに①②③と番号をつけ、「①②③より、○○がそれぞれ等しいので」。','合同のあとは「<b>対応する辺（角）は等しい</b>」で結論へ。'],
+ m:['「その間の角」「両端の角」の位置を確かめる。','頂点の対応順をそろえる（△ABC≡△DEF なら A↔D）。']},
+sojisho:{k:['相似条件：<b>2組の角</b>がいちばんよく出る','ほかに <b>2組の辺の比とその間の角</b>、<b>3組の辺の比</b>'],
+ t:['<b>共通な角</b>・<b>対頂角</b>で1組、<b>円周角</b>や<b>平行線の錯角</b>でもう1組。','角が直接言えないときは、<b>二等辺三角形の底角</b>や外角を使ってつなぐ。'],
+ m:['「相似の記号 ∽」と「合同の記号 ≡」をまちがえない。']},
+enshomei:{k:['「<b>○○ に対する円周角は等しいから</b>」と弧の名前を書く。','中心角を使うなら「円周角は中心角の半分」。'],t:['弧の両はしの2点を見て、その弧の上にない点から見た角をさがす。'],m:['弧の書き方（AD の上に ⌒）。']},
+shokeisan:{k:['証明した相似（合同）を<b>そのまま使う</b>のが近道。'],t:['相似比から長さ → 面積比は2乗。','円周角で角度を順に出す。'],m:['単位（cm、cm²、°）のつけ忘れ。']},
+};
+const PW=1236,PH=1749;
+const FALLBACK={mon:'keisan',kan:'mihaji',zu:'soji',sho:'shokeisan'};
+/* ===== テーマ別対策：設問ごとに、解説のキーワードの点数がいちばん高いテーマにだけ入れる ===== */
+const stripTags=s=>String(s).replace(/<[^>]+>/g,'');
+const gre=t=>t._g||(t._g=new RegExp(t.re.source,'g'));
+function tscore(t,ans,exp){
+  const bold=(String(exp).match(/<b>.*?<\/b>/g)||[]).join(' ');
+  const c=s=>{const m=stripTags(s).match(gre(t));return m?new Set(m).size:0};
+  return t.ansOnly?(/証明/.test(stripTags(ans))?0:c(ans)*3):c(ans)*3+c(bold)*2+c(exp);
+}
+function classify(q,f){
+  const out=new Set(),ts=THEMES.filter(t=>t.f===f),groups={};
+  for(const t of ts){
+    if(t.g==='S'){ if(t.re.test(stripTags(q[4]))||t.re.test(stripTags(q[3]))) out.add(t.id); continue; }
+    (groups[t.g]=groups[t.g]||[]).push([t.id,tscore(t,q[3],q[4])]);
+  }
+  for(const [g,arr] of Object.entries(groups)){
+    const best=Math.max(...arr.map(a=>a[1]));
+    if(best<(g==='top2'?3:1)) continue;
+    arr.forEach(([id,sc])=>{ if(sc===best) out.add(id); });
+  }
+  if(![...out].some(id=>THEMES.find(t=>t.id===id).g!=='S')&&FALLBACK[f]) out.add(FALLBACK[f]); // どれにも入らない設問の行き先
+  return out;
+}
+const ALLQ=[];
+for(const s of SUBJECTS) for(let n=1;n<=s.n;n++){ const id=`${s.key}-${n}`,u=UNITS[id]; if(!u) continue;
+  u.pages.forEach((pg,pi)=>(pg.qs||[]).forEach((q,qi)=>{ if(q[5]) return; ALLQ.push({id,n,s,pi,qi,pg,q,th:classify(q,s.key)}); })); }
+const themeItems=t=>ALLQ.filter(it=>it.th.has(t.id));
+const THEME_COUNT={}; THEMES.forEach(t=>THEME_COUNT[t.id]=themeItems(t).length);
+function cropHTML(it){
+  const PHh=it.pg.h||PH, y=it.q[2], nexts=it.pg.qs.map(x=>x[2]).filter(v=>v>y+15).sort((a,b)=>a-b);
+  const y0=Math.max(0,y-24), y1=Math.min(PHh-10, nexts.length?nexts[0]-22:y+420), h=Math.max(60,Math.min(y1-y0,nexts.length?700:420));
+  const X0=0.06,XW=0.9; // 左右の余白を切って少し大きく見せる
+  return `<div class="crop" style="padding-top:${(h/(PW*XW)*100).toFixed(2)}%"><img src="${it.pg.img}" alt="" loading="lazy" style="width:${(100/XW).toFixed(3)}%;left:-${(X0/XW*100).toFixed(3)}%;transform:translateY(-${(y0/PHh*100).toFixed(3)}%)"></div>`;
+}
+
+function renderThemes(){
+  app.innerHTML=`
+  <div class="bar"><button class="back" id="back">◀ 単元一覧にもどる</button><h2>テーマ別対策</h2></div>
+  <p class="mode">よく出るテーマごとに、全単元から問題を集めました。テーマをえらんで、まとめて練習しよう。</p>
+  <div class="subjects">${SUBJECTS.map(s=>`
+    <section class="subj" style="--c:var(${s.color})">
+      <header><h2>${s.name}</h2><span>${s.sub}</span></header>
+      <div class="themes">${THEMES.filter(t=>t.f===s.key&&THEME_COUNT[t.id]).map(t=>`
+        <button class="theme" data-t="${t.id}"><span class="tn">${t.name}</span><span class="tc">${THEME_COUNT[t.id]}問</span></button>`).join('')}
+      </div>
+    </section>`).join('')}
+  </div>`;
+  document.getElementById('back').onclick=()=>{location.hash=''};
+  app.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{location.hash='theme-'+b.dataset.t});
+}
+
+function renderTheme(tid){
+  const t=THEMES.find(x=>x.id===tid),s=SUBJECTS.find(x=>x.key===t.f),items=themeItems(t);
+  let lastU='';
+  app.innerHTML=`
+  <div class="bar" style="--c:var(${s.color})"><button class="back" id="back">◀ テーマ一覧にもどる</button>
+    <h2>${s.name}：${t.name}<small>${items.length}問</small></h2></div>
+  ${GUIDE[tid]?`<section class="guide" style="--c:var(${s.color})"><h3>${t.name}のポイント</h3>
+    <h4>まずおさえること</h4><ul>${GUIDE[tid].k.map(x=>`<li>${x}</li>`).join('')}</ul>
+    <h4 class="t2">よく出る問われ方と解き方</h4><ul>${GUIDE[tid].t.map(x=>`<li>${x}</li>`).join('')}</ul>
+    <h4 class="t3">まちがえやすいところ</h4><ul>${GUIDE[tid].m.map(x=>`<li>${x}</li>`).join('')}</ul></section>`:''}
+  <p class="mode">ポイントを読んだら、下の問題で練習しよう。問題文を読んで解いたら「答えと解説」で確認しよう。図や資料が見たいときは「ページ全体で見る」へ。</p>
+  <ol class="tlist" style="--c:var(${s.color})">${items.map((it,i)=>{
+    const head=it.id!==lastU?`<li class="tu"><b>${s.name}の ${CIRC[it.n-1]}</b><small>${(UNIT_LABELS[it.id]||'').replace('/','・')}</small></li>`:'';
+    lastU=it.id;
+    return head+`<li class="ti">
+      <div class="trow"><span class="tq">${it.pg.label}　${it.q[0]}${it.q[6]?' <span class="hard">ムズ</span>':''}</span>
+        <a class="tgo" href="#${it.id}@${it.pi}@${it.qi}">ページ全体で見る ▶</a>
+        <button class="tans" data-i="${i}" aria-expanded="false">答えと解説</button></div>
+      ${cropHTML(it)}
+      <div class="tbody" id="tb${i}" hidden><p class="a">こたえ：${it.q[3]}</p><p class="exp">${it.q[4]}</p></div></li>`}).join('')}
+  </ol>`;
+  document.getElementById('back').onclick=()=>{location.hash='themes'};
+  app.querySelectorAll('.tans').forEach(b=>b.onclick=()=>{const el=document.getElementById('tb'+b.dataset.i),o=el.hidden;el.hidden=!o;b.setAttribute('aria-expanded',String(o));b.textContent=o?'とじる':'答えと解説'});
+  app.querySelectorAll('.tgo').forEach(a=>a.onclick=()=>{route.from='theme-'+tid});
+}
+
+let state={page:0,kaisetsu:false};
+
+function renderTop(){
+  app.innerHTML=`
+  <section class="hero">
+    <div class="top"><svg class="sprig" viewBox="0 0 44 52" aria-hidden="true"><path d="M22 50V12" stroke="#95714d" stroke-width="3" stroke-linecap="round"/><ellipse cx="22" cy="9" rx="6" ry="9" transform="rotate(0 22 9)" fill="#f4c3c8" stroke="#95714d" stroke-width="2"/><ellipse cx="14" cy="20" rx="6" ry="9" transform="rotate(-40 14 20)" fill="#f6cfa5" stroke="#95714d" stroke-width="2"/><ellipse cx="30" cy="20" rx="6" ry="9" transform="rotate(40 30 20)" fill="#bcdcf3" stroke="#95714d" stroke-width="2"/><ellipse cx="14" cy="32" rx="6" ry="9" transform="rotate(-40 14 32)" fill="#c3e5cd" stroke="#95714d" stroke-width="2"/><ellipse cx="30" cy="32" rx="6" ry="9" transform="rotate(40 30 32)" fill="#d9cdf1" stroke="#95714d" stroke-width="2"/><ellipse cx="14" cy="44" rx="6" ry="9" transform="rotate(-40 14 44)" fill="#fbeaa6" stroke="#95714d" stroke-width="2"/><ellipse cx="30" cy="44" rx="6" ry="9" transform="rotate(40 30 44)" fill="#f4c3c8" stroke="#95714d" stroke-width="2"/></svg><span class="eyebrow">業者テスト 数学 ・ 類題別</span><a class="switch" style="--sw:var(--leaf-green)" href="https://myouga3bon.github.io/gyosha-kakomon/rika/" target="_top">理科へ →</a><a class="switch" style="--sw:var(--leaf-orange);margin-left:8px" href="https://myouga3bon.github.io/gyosha-kakomon/shakai/" target="_top">社会へ →</a></div>
+    <h1><span class="subj-name" style="--leaf-c:var(--leaf-blue)">数学</span><span class="w">業者カコモン</span><span class="w">類題トレーニング</span></h1>
+    <p>単元をえらんで問題を解いたら、「解説を見る」ボタンで答えとポイントを確認しよう。</p>
+  </section>
+  <a class="themebtn" href="#themes"><b>テーマ別対策</b><i>▶</i></a>
+  <div class="legend"><span><i style="background:var(--mon)"></i>解説あり</span><span><i style="border:1.5px solid var(--line)"></i>準備中</span></div>
+  <div class="subjects">${SUBJECTS.map(s=>`
+    <section class="subj" style="--c:var(${s.color})">
+      <header><h2>${s.name}</h2><span>${s.sub}</span></header>
+      <div class="units">${Array.from({length:s.n},(_,i)=>{
+        const id=`${s.key}-${i+1}`,ok=!!UNITS[id];
+        return `<button class="unit${ok?' ready':''}" ${ok?`data-go="${id}"`:'disabled'} aria-label="${s.name}の${CIRC[i]} ${(UNIT_LABELS[id]||'').replace('/','、')}${ok?'':'（準備中）'}"><span class="n">${CIRC[i]}</span><span class="lb">${(UNIT_LABELS[id]||'').replace('/','<br>')}</span></button>`}).join('')}
+      </div>
+    </section>`).join('')}
+  </div>`;
+  app.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{location.hash=b.dataset.go});
+}
+
+function unit(id){
+  const u=UNITS[id],[k,n]=id.split('-'),s=SUBJECTS.find(x=>x.key===k);
+  const p=u.pages[state.page]; const hasK=!!p.svg;
+  if(!hasK) state.kaisetsu=false;
+  app.innerHTML=`
+  <div class="bar" style="--c:var(${s.color})">
+    <button class="back" id="back">${route.from?'◀ テーマにもどる':'◀ 単元一覧にもどる'}</button>
+    <h2>${s.name}の ${CIRC[n-1]}<small>${(UNIT_LABELS[id]||'').replace('/','・')}</small></h2>
+    <div class="tabs" role="tablist">${u.pages.map((pg,i)=>`<button class="tab" role="tab" aria-selected="${i===state.page}" data-p="${i}">${pg.label}</button>`).join('')}</div>
+    <button class="kbtn${state.kaisetsu?' on':''}" id="kbtn" ${hasK?'':'hidden'}>${state.kaisetsu?'問題にもどる':'解説を見る'}</button>
+  </div>
+  <p class="mode">${hasK?(state.kaisetsu?'解説ページ：青い問題番号ボタンをおすと解説が出るよ（赤＝答え、青＝ポイント、緑＝要チェック）':'問題ページ：答えはノートに書こう'):'解答：答え合わせに使おう'}</p>
+  <div class="kview${state.kaisetsu?' k':''}" style="--c:var(${s.color})">
+  <div class="sheet">
+    <img src="${p.img}" alt="${s.name}の${CIRC[n-1]} ${p.label}" width="1236" height="${p.h||1749}">
+    ${hasK?`<svg viewBox="0 0 1236 ${p.h||1749}" aria-hidden="true">${DEFS}${state.kaisetsu?p.svg.join(''):''}${(p.skip||[]).join('')}</svg>`:''}
+    ${state.kaisetsu?(p.qs||[]).map((q,i)=>`<button class="qb${q[5]?' skip':''}" data-q="${i}" aria-pressed="false" style="left:${q[1]/12.36}%;top:${q[2]/(p.h||1749)*100}%">${q[5]?'✕ ':''}${q[0]}${q[6]?'<span class="hard">ムズ</span>':''}</button>`).join(''):''}
+  ${(!state.kaisetsu&&state.mark!=null&&state.markPage===state.page&&p.qs&&p.qs[state.mark])?`<div class="qmark" id="qmark" style="top:${p.qs[state.mark][2]/(p.h||1749)*100}%">ここ ▶ ${p.qs[state.mark][0]}</div>`:''}
+  </div>
+  ${state.kaisetsu?`<aside class="panel empty" id="panel" aria-live="polite"></aside>`:''}
+  </div>`;
+  document.getElementById('back').onclick=()=>{location.hash=route.from||''};
+  app.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{state.page=+b.dataset.p;unit(id)});
+  if(state.kaisetsu){
+    const panel=document.getElementById('panel'),btns=[...app.querySelectorAll('.qb')];
+    const show=i=>{
+      btns.forEach((b,j)=>b.setAttribute('aria-pressed',String(j===i)));
+      if(i<0){panel.className='panel empty';panel.innerHTML='<h3>解説</h3><p class="hint">問題番号の青いボタンをおすと、ここに解説が出るよ。</p>';return}
+      const q=p.qs[i];panel.className='panel';
+      panel.innerHTML=`<h3>${q[0]}${q[6]?' <small class="hard" style="font-size:12px;background:#1e9a4a;color:#fff;border-radius:6px;padding:0 6px">ムズ</small>':''}<button id="pclose" aria-label="閉じる">✕</button></h3>`+
+        (q[5]?`<p class="a skipa">✕ ${q[3]}</p>`:`<p class="a">こたえ：${q[3]}</p>`)+`<p class="exp">${q[4]}</p>`;
+      document.getElementById('pclose').onclick=()=>show(-1);
+    };
+    let cur=-1;
+    btns.forEach((b,i)=>b.onclick=()=>{cur=(cur===i)?-1:i;show(cur);});
+    show(-1);
+  }
+  const kb=document.getElementById('kbtn'); if(kb) kb.onclick=()=>{state.kaisetsu=!state.kaisetsu;unit(id)};
+}
+
+function route(){
+  const h=location.hash.slice(1),[id,pp,qq]=h.split('@');
+  if(h==='themes'){ route.last=null; route.from=null; renderThemes(); window.scrollTo(0,0); return; }
+  if(h.startsWith('theme-')&&THEMES.some(t=>t.id===h.slice(6))){ route.last=null; renderTheme(h.slice(6)); window.scrollTo(0,0); return; }
+  if(UNITS[id]){
+    if(route.last!==h){ state={page:+pp||0,kaisetsu:false,mark:qq!=null?+qq:null,markPage:+pp||0}; if(pp==null&&!route.keep) route.from=null; }
+    route.last=h; unit(id);
+    const mk=document.getElementById('qmark');
+    if(mk){ const y=mk.getBoundingClientRect().top+scrollY; window.scrollTo(0,Math.max(0,y-innerHeight*0.3)); } else window.scrollTo(0,0);
+    return;
+  }
+  route.last=null; route.from=null; renderTop(); window.scrollTo(0,0);
+}
+addEventListener('hashchange',route); route();
+</script>
