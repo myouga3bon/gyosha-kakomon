@@ -178,9 +178,11 @@ body::before{background:var(--bg)}
 .tans{background:#f08f7a;color:#fff}
 .tans[aria-expanded="true"]{background:var(--surface);color:var(--fg)}
 .tbody{margin-top:8px;display:flex;flex-direction:column;gap:6px}
+.tbody[hidden]{display:none}
 .tbody .a{font-weight:700;margin:0}
-.crop{position:relative;overflow:hidden;margin-top:8px;border:1.5px solid var(--line);border-radius:10px;background:#fff}
-.crop img{position:absolute;top:0;left:0;width:100%;height:auto;display:block}
+.crop{position:relative;overflow:hidden;margin-top:6px;border:1.5px solid var(--line);border-radius:10px;background:#fff}
+.same{margin:6px 0 0;font-size:13px;color:var(--muted)}
+.crop img{max-width:none;position:absolute;top:0;left:0;width:100%;height:auto;display:block}
 .qmark{position:absolute;left:0;transform:translateY(-50%);z-index:3;background:#f08f7a;color:#fff;border:2px solid #fff;border-radius:999px;padding:.15em .6em;font-weight:700;font-size:clamp(11px,1.9cqw,16px);box-shadow:0 1px 3px rgba(0,0,0,.3)}
 .guide{background:var(--surface);border:2.5px solid var(--brown);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:6px}
 .guide>h3{font-size:19px;display:flex;align-items:center;gap:8px}
@@ -199,6 +201,7 @@ body::before{background:var(--bg)}
 
 <div class="wrap" id="app"></div>
 <script src="data.js"></script>
+<script src="crops.js"></script>
 
 <script>
 /* ===== 単元一覧（PDFの並び順どおり。1単元＝問題2枚＋解答用紙＋解説入り2枚） ===== */
@@ -506,7 +509,15 @@ for(const s of SUBJECTS) for(let n=1;n<=s.n;n++){ const id=`${s.key}-${n}`,u=UNI
   u.pages.forEach((pg,pi)=>(pg.qs||[]).forEach((q,qi)=>{ if(q[5]) return; ALLQ.push({id,n,s,pi,qi,pg,q,th:classify(q,s.key)}); })); }
 const themeItems=t=>ALLQ.filter(it=>it.th.has(t.id));
 const THEME_COUNT={}; THEMES.forEach(t=>THEME_COUNT[t.id]=themeItems(t).length);
-function cropHTML(it){
+function cropHTML(it,seen){
+  const R=(window.THEME_CROPS||{})[`${it.id}@${it.pi}@${it.qi}`];
+  if(R){ // 設問に必要な部分（リード・図・設問）だけを切り出して縦にならべる。[y0,y1] か 別ページなら [y0,y1,ページ]
+    const X0=0.06,XW=0.9;
+    return R.map(([a,b,pp],k)=>{ const img=pp==null?it.pg.img:UNITS[it.id].pages[pp].img, key=img+':'+a+'-'+b;
+      if(seen&&k<R.length-1&&seen.has(key)) return `<p class="same">↑ 実験・資料は上と同じ（「ページ全体で見る」でも見られます）</p>`;
+      if(seen) seen.add(key);
+      return `<div class="crop" style="padding-top:${((b-a)/(PW*XW)*100).toFixed(2)}%"><img src="${img}" alt="" loading="lazy" style="width:${(100/XW).toFixed(3)}%;left:-${(X0/XW*100).toFixed(3)}%;transform:translateY(-${(a/PH*100).toFixed(3)}%)"></div>`;}).join('');
+  }
   const y=it.q[2], nexts=it.pg.qs.map(x=>x[2]).filter(v=>v>y+15).sort((a,b)=>a-b);
   const y0=Math.max(0,y-24), y1=Math.min(PH-20, nexts.length?nexts[0]-22:y+420), h=Math.max(60,Math.min(y1-y0,nexts.length?700:420));
   const X0=0.06,XW=0.9; // 左右の余白を切って少し大きく見せる
@@ -531,7 +542,7 @@ function renderThemes(){
 
 function renderTheme(tid){
   const t=THEMES.find(x=>x.id===tid),s=SUBJECTS.find(x=>x.key===t.f),items=themeItems(t);
-  let lastU='';
+  let lastU='';const SEEN=new Set();
   app.innerHTML=`
   <div class="bar" style="--c:var(${s.color})"><button class="back" id="back">◀ テーマ一覧にもどる</button>
     <h2>${s.name}：${t.name}<small>${items.length}問</small></h2></div>
@@ -547,7 +558,7 @@ function renderTheme(tid){
       <div class="trow"><span class="tq">${it.pg.label}　${it.q[0]}${it.q[6]?' <span class="hard">ムズ</span>':''}</span>
         <a class="tgo" href="#${it.id}@${it.pi}@${it.qi}">ページ全体で見る ▶</a>
         <button class="tans" data-i="${i}" aria-expanded="false">答えと解説</button></div>
-      ${cropHTML(it)}
+      ${cropHTML(it,SEEN)}
       <div class="tbody" id="tb${i}" hidden><p class="a">こたえ：${it.q[3]}</p><p class="exp">${it.q[4]}</p></div></li>`}).join('')}
   </ol>`;
   document.getElementById('back').onclick=()=>{location.hash='themes'};
